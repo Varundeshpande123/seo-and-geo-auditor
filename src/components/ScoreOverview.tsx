@@ -24,26 +24,55 @@ export const ScoreOverview: React.FC<ScoreOverviewProps> = ({ audit, lang }) => 
   };
 
   const handleCopyAiPrompt = () => {
-    const issuesList = audit.issues
-      .map((issue, idx) => `${idx + 1}. [${issue.severity.toUpperCase()}] ${issue.title} (Category: ${issue.category})\n   - Problem: ${issue.description}\n   - Solution: ${issue.recommendation}${issue.codeSnippet ? `\n   - Code To Add/Replace:\n\`\`\`\n${issue.codeSnippet}\n\`\`\`` : ''}`)
-      .join('\n\n');
+    const issuesFormatted = audit.issues.map((issue, idx) => {
+      let targetFile = 'index.html or relevant component';
+      if (issue.id.includes('robot') || issue.id.includes('bot')) targetFile = 'public/robots.txt (or root robots.txt)';
+      else if (issue.id.includes('llms')) targetFile = 'public/llms.txt (create new file)';
+      else if (issue.id.includes('schema') || issue.id.includes('title') || issue.id.includes('meta') || issue.id.includes('h1') || issue.id.includes('canonical')) targetFile = 'index.html (in <head> or <body>)';
+      else if (issue.id.includes('image') || issue.id.includes('alt') || issue.id.includes('dimension')) targetFile = 'Relevant JSX/HTML components with <img> tags';
+      else if (issue.id.includes('privacy') || issue.id.includes('terms') || issue.id.includes('legal')) targetFile = 'Footer component (plus static fallback in index.html)';
 
-    const promptText = `I ran an SEO and GEO (Generative Engine Optimization / AI Search) audit on my website (${audit.url}).
+      return `### ACTION ${idx + 1}: ${issue.title}
+- **Category:** ${issue.category.toUpperCase()} | **Severity:** ${issue.severity.toUpperCase()}
+- **Target File:** \`${targetFile}\`
+- **Problem Statement:** ${issue.description}
+- **Required Action:** ${issue.recommendation}
+${issue.codeSnippet ? `- **Exact Code To Insert / Replace:**\n\`\`\`\n${issue.codeSnippet}\n\`\`\`\n` : ''}`;
+    }).join('\n\n');
 
-CURRENT AUDIT RESULTS:
-- Overall Health Score: ${audit.overallScore}/100 (Grade ${audit.grade})
+    const promptText = `# TECHNICAL SEO & GEO (AI SEARCH) CODEBASE FIX SPECIFICATION
+**Target Website:** ${audit.url}
+**Audit Date:** ${new Date(audit.timestamp).toLocaleDateString()}
+**Current Overall Score:** ${audit.overallScore}/100 (Grade ${audit.grade})
 - Google SEO Score: ${audit.seo.score}/100
 - AI Search (GEO) Score: ${audit.geo.score}/100
-- Page Performance Speed: ${audit.performance.score}/100
-- Insider & Security Score: ${audit.insider.score}/100
+- Core Web Vitals & Speed: ${audit.performance.score}/100
+- Security & Trust: ${audit.insider.score}/100
 
-GOAL:
-Fix all of the following detected issues in my project codebase accurately so my website scores 100/100 across Google SEO and AI Search (ChatGPT, Gemini, Perplexity, Claude).
+---
 
-DETECTED ISSUES TO FIX:
-${issuesList}
+## 🎯 OBJECTIVE FOR AI CODING AGENT:
+You are an expert Senior Full-Stack Engineer and Technical SEO/GEO Specialist. Inspect my repository and modify the exact codebase files to resolve every issue below so my website scores 100/100 on Google and AI search engines (ChatGPT, Claude, Gemini, Perplexity).
 
-Please modify the necessary files in my codebase (e.g. index.html, robots.txt, public/llms.txt, Schema markup, meta tags, footer links, etc.) accurately.`;
+## ⚠️ STRICT IMPLEMENTATION RULES:
+1. **Preserve Functionality:** Keep all existing UI branding, styling, forms, and business logic intact.
+2. **No Hallucinations:** Do not fabricate unverified reviews, fake certifications, fake addresses, or unverified claims.
+3. **SPA / SSR Consideration:** If this is a client-rendered SPA (React/Vite/Next), ensure critical metadata, schema, and legal footer links are also present in the initial static \`index.html\` shell so non-JavaScript AI bots (GPTBot, ClaudeBot) can crawl them directly.
+4. **Clean Code:** Avoid unnecessary external libraries; use standard semantic HTML, CSS, and clean JSON-LD.
+
+---
+
+## 📋 EXACT STEP-BY-STEP ACTIONS TO IMPLEMENT:
+
+${issuesFormatted}
+
+---
+
+## 🏁 FINAL VERIFICATION STEP:
+After applying the changes:
+1. Run your build tool (\`npm run build\` or equivalent) to confirm zero syntax or TypeScript errors.
+2. Verify that JSON-LD blocks are valid JSON without trailing commas.
+3. Report a summary of all modified files.`;
 
     navigator.clipboard.writeText(promptText);
     setCopiedPrompt(true);
