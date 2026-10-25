@@ -139,7 +139,7 @@ export async function onRequest(context: any): Promise<Response> {
     });
 
     // 3. Run Analysis Engines in Parallel
-    const seoResult = analyzeSeo(html, targetUrl);
+    const seoResult = analyzeSeo(html, targetUrl, robotsTxt);
     const geoResult = analyzeGeo({ html, robotsTxt, llmsTxt, jsBundle, targetUrl });
     const speedResult = await analyzeSpeed(targetUrl, startTime, html.length, env?.GOOGLE_PAGESPEED_API_KEY);
     const insiderResult = analyzeInsiderMetrics({ html, targetUrl, responseHeaders: headersMap });

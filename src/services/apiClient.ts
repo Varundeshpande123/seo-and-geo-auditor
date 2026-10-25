@@ -65,7 +65,7 @@ export async function runWebsiteAudit(targetUrl: string): Promise<FullAuditResul
   }
 
   // Run the same clean engines
-  const seoResult = analyzeSeo(html, normalizedUrl);
+  const seoResult = analyzeSeo(html, normalizedUrl, robotsTxt);
   const geoResult = analyzeGeo({ html, robotsTxt, targetUrl: normalizedUrl });
   const speedResult = await analyzeSpeed(normalizedUrl, startTime, html.length);
   const insiderResult = analyzeInsiderMetrics({ html, targetUrl: normalizedUrl });

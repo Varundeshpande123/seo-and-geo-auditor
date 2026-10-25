@@ -335,6 +335,42 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', jsBundle = '', 
     });
   }
 
+  // 8. Business Entity Clarity & NAP (Name, Address, Phone) Verification
+  const hasPhone = /tel:[^"'>]+|(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|\+91[-.\s]?\d{10}/i.test(html) || /(?:call|phone|contact)\s*:\s*\+?\d+/i.test(jsBundle || '');
+  const hasEmail = /mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i.test(html) || /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(html) || /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(jsBundle || '');
+  const hasPhysicalAddress = /(?:address|pin\s*code|postal\s*code|pincode|industrial\s*area|state|karnataka|india|bangalore|bengaluru)/i.test(html) || /(?:karnataka|india|bangalore|pincode)/i.test(jsBundle || '');
+  const hasVerifiedNAP = (hasPhone || hasEmail) && hasPhysicalAddress;
+
+  if (!hasVerifiedNAP) {
+    issues.push({
+      id: 'business-entity-unverified',
+      category: 'geo',
+      severity: 'warning',
+      title: 'Business Entity Contact & Location Unverified',
+      description: 'Generative search engines (ChatGPT, Perplexity, Gemini) require verified Name, Address, and Phone (NAP) details in visible HTML and Organization Schema to reliably cite your business for local and commercial queries.',
+      recommendation: 'Ensure your official business name, registered address/service area, phone number, and support email are clearly visible in the footer and encoded in Organization schema.',
+      impactScore: 6
+    });
+  }
+
+  // 9. Technical Specifications & Measurable Units Check
+  const unitMatches = html.match(/\b(?:\d+(?:\.\d+)?\s*(?:mm|cm|meters|m|kg|tons|kW|volts|rpm|fps|years\s*warranty|warranty|tested|certified))\b/gi) || [];
+  const standardsMatches = html.match(/\b(?:ISO[\s-]?\d+|ASTM[\s-]?\d+|BIS|EN1176|RoHS|CE\s*certified)\b/gi) || [];
+  const detectedUnits = Array.from(new Set([...unitMatches, ...standardsMatches])).slice(0, 5);
+  const hasMeasurementsOrUnits = detectedUnits.length >= 2;
+
+  if (!hasMeasurementsOrUnits) {
+    issues.push({
+      id: 'sparse-technical-specs',
+      category: 'geo',
+      severity: 'info',
+      title: 'Sparse Technical Specifications & Physical Metrics',
+      description: 'Generative AI search models prioritize product and service pages that state concrete dimensions, engineering standards, warranty terms, and physical specifications over generic marketing copy.',
+      recommendation: 'Incorporate technical specification tables with exact units (e.g. dimensions in mm, load capacity in kg, compliance standards like ISO/ASTM/EN1176).',
+      impactScore: 4
+    });
+  }
+
   // Final GeoTest-Calibrated Strict Score Calculation
   // Breakdown matching GeoTest's published rubric (out of 100):
   // 1. Answer Structure: 20 pts max
@@ -543,6 +579,34 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', jsBundle = '', 
         summary: sovSummary,
       },
       promptDiscovery,
+      businessEntityClarity: {
+        hasPhone,
+        hasEmail,
+        hasPhysicalAddress,
+        hasVerifiedNAP,
+        status: hasVerifiedNAP ? 'good' : (hasPhone || hasEmail || hasPhysicalAddress ? 'warning' : 'critical'),
+        feedback: hasVerifiedNAP
+          ? 'Verified entity contact and location signals detected.'
+          : 'Missing explicit phone, email, or physical address signals.',
+      },
+      technicalSpecifications: {
+        hasMeasurementsOrUnits,
+        hasSafetyOrWarrantyClaims: Boolean(html.match(/warranty|certified|safety/i)),
+        detectedUnits,
+        status: hasMeasurementsOrUnits ? 'good' : 'warning',
+        feedback: hasMeasurementsOrUnits
+          ? `Detected verifiable technical metrics: ${detectedUnits.join(', ')}`
+          : 'No concrete engineering units or measurement standards detected.',
+      },
+      directAnswerOptimization: {
+        hasQuestionHeadings: faqOrQaFormatFound,
+        hasConciseAnswers: directAnswerBlocksFound,
+        answerSnippetCount: qaHeadingMatch ? qaHeadingMatch.length : 0,
+        status: (faqOrQaFormatFound && directAnswerBlocksFound) ? 'good' : 'warning',
+        feedback: faqOrQaFormatFound && directAnswerBlocksFound
+          ? 'Optimal direct Q&A inverted pyramid structure found.'
+          : 'Consider structuring sections with question headings and concise 40-60 word introductory answers.',
+      },
     },
     issues,
   };

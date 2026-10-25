@@ -54,8 +54,16 @@ export interface SeoMetrics {
   images: {
     total: number;
     missingAlt: number;
+    missingDimensions?: number;
+    nextGenFormatCount?: number;
     sampleMissingAlt: string[];
     status: 'good' | 'warning' | 'critical';
+  };
+  sitemap?: {
+    referencedInRobots: boolean;
+    sitemapUrl?: string;
+    status: 'good' | 'warning';
+    feedback: string;
   };
   links: {
     total: number;
@@ -149,6 +157,28 @@ export interface GeoMetrics {
     intent: 'Informational' | 'Commercial' | 'Comparative';
     suggestedEngine: 'ChatGPT' | 'Perplexity' | 'Gemini';
   }[];
+  businessEntityClarity?: {
+    hasPhone: boolean;
+    hasEmail: boolean;
+    hasPhysicalAddress: boolean;
+    hasVerifiedNAP: boolean;
+    status: 'good' | 'warning' | 'critical';
+    feedback: string;
+  };
+  technicalSpecifications?: {
+    hasMeasurementsOrUnits: boolean;
+    hasSafetyOrWarrantyClaims: boolean;
+    detectedUnits: string[];
+    status: 'good' | 'warning';
+    feedback: string;
+  };
+  directAnswerOptimization?: {
+    hasQuestionHeadings: boolean;
+    hasConciseAnswers: boolean;
+    answerSnippetCount: number;
+    status: 'good' | 'warning';
+    feedback: string;
+  };
 }
 
 export interface PerformanceMetrics {

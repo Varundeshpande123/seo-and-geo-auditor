@@ -1,6 +1,6 @@
 import type { SeoMetrics, AuditIssue } from '../types/audit';
 
-export function analyzeSeo(html: string, targetUrl: string): { seo: SeoMetrics; issues: AuditIssue[] } {
+export function analyzeSeo(html: string, targetUrl: string, robotsTxt: string = ''): { seo: SeoMetrics; issues: AuditIssue[] } {
   const issues: AuditIssue[] = [];
 
   // 1. Title Analysis
@@ -164,17 +164,33 @@ export function analyzeSeo(html: string, targetUrl: string): { seo: SeoMetrics; 
     });
   }
 
-  // 6. Image Alt Tags
+  // 6. Image Alt Tags, Dimensions (CLS Prevention) & Formats
   const imgMatches = Array.from(html.matchAll(/<img\b([^>]*)>/gi));
   let missingAltCount = 0;
+  let missingDimensionsCount = 0;
+  let nextGenFormatCount = 0;
   const sampleMissingAlt: string[] = [];
 
   for (const match of imgMatches) {
     const attrs = match[1];
     const hasAlt = /\balt=["'][^"']*["']/i.test(attrs);
+    const hasWidth = /\bwidth=["']?\d+/i.test(attrs);
+    const hasHeight = /\bheight=["']?\d+/i.test(attrs);
+    const srcMatch = attrs.match(/src=["']([^"']*)["']/i);
+
+    if (srcMatch) {
+      const src = srcMatch[1].toLowerCase();
+      if (src.endsWith('.webp') || src.endsWith('.avif') || src.endsWith('.svg')) {
+        nextGenFormatCount++;
+      }
+    }
+
+    if (!hasWidth || !hasHeight) {
+      missingDimensionsCount++;
+    }
+
     if (!hasAlt) {
       missingAltCount++;
-      const srcMatch = attrs.match(/src=["']([^"']*)["']/i);
       if (srcMatch && sampleMissingAlt.length < 3) {
         sampleMissingAlt.push(srcMatch[1]);
       }
@@ -188,10 +204,23 @@ export function analyzeSeo(html: string, targetUrl: string): { seo: SeoMetrics; 
       id: 'missing-image-alt',
       category: 'seo',
       severity: 'warning',
-      title: `${missingAltCount} images missing 'alt' attributes`,
-      description: 'Alt attributes are essential for Google Image search ranking and accessibility for visually impaired users.',
-      recommendation: 'Add descriptive alt text to all image tags.',
-      codeSnippet: `<img src="example.webp" alt="Detailed description of image content" />`,
+      title: `${missingAltCount} image(s) missing 'alt' attributes`,
+      description: 'Alt attributes are essential for Google Image search ranking and screen reader accessibility.',
+      recommendation: 'Add descriptive alt text to all image tags with accurate visible descriptions.',
+      codeSnippet: `<img src="exhibit.webp" alt="Interactive outdoor science park exhibit installation" />`,
+      impactScore: 5
+    });
+  }
+
+  if (missingDimensionsCount > 0) {
+    issues.push({
+      id: 'missing-image-dimensions',
+      category: 'performance',
+      severity: 'warning',
+      title: `${missingDimensionsCount} image(s) missing width/height attributes`,
+      description: 'Images without explicit dimensions cause Cumulative Layout Shift (CLS), hurting Core Web Vitals.',
+      recommendation: 'Specify width and height attributes or CSS aspect-ratio on all <img> elements to reserve display space.',
+      codeSnippet: `<img src="product.webp" width="600" height="400" alt="Outdoor science park installation" />`,
       impactScore: 5
     });
   }
@@ -335,8 +364,18 @@ export function analyzeSeo(html: string, targetUrl: string): { seo: SeoMetrics; 
       images: {
         total: imgMatches.length,
         missingAlt: missingAltCount,
+        missingDimensions: missingDimensionsCount,
+        nextGenFormatCount,
         sampleMissingAlt,
         status: imgStatus,
+      },
+      sitemap: {
+        referencedInRobots: Boolean(robotsTxt && /sitemap:\s*https?:\/\/[^\s]+/i.test(robotsTxt)),
+        sitemapUrl: (robotsTxt && robotsTxt.match(/sitemap:\s*(https?:\/\/[^\s]+)/i)?.[1]) || undefined,
+        status: (robotsTxt && /sitemap:\s*https?:\/\/[^\s]+/i.test(robotsTxt)) ? 'good' : 'warning',
+        feedback: (robotsTxt && /sitemap:\s*https?:\/\/[^\s]+/i.test(robotsTxt))
+          ? 'Sitemap is properly declared in robots.txt.'
+          : 'Sitemap declaration missing in robots.txt.',
       },
       links: {
         total: linkMatches.length,
