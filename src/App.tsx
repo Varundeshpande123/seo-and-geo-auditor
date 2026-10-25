@@ -30,15 +30,11 @@ export function App() {
     const token = localStorage.getItem('seo_geo_auth_token');
     if (token === 'authenticated_somu1008') {
       setIsAuthenticated(true);
-      handleAnalyze('somashekhar.in');
     }
   }, []);
 
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
-    if (!auditResult) {
-      handleAnalyze('somashekhar.in');
-    }
   };
 
   const handleLogout = () => {
@@ -401,6 +397,69 @@ export function App() {
                     />
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Empty State Banner (Before User Runs An Audit) */}
+            {!auditResult && !isLoading && (
+              <div className="container" style={{ maxWidth: '860px', paddingBottom: '60px' }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                  gap: '16px',
+                  marginTop: '12px',
+                }}>
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1px solid #dadce0',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '20px',
+                    textAlign: 'left',
+                    boxShadow: '0 1px 3px rgba(60,64,67,0.08)',
+                  }}>
+                    <div style={{ fontSize: '1.4rem', marginBottom: '8px' }}>🔍</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#202124', marginBottom: '4px' }}>
+                      {lang === 'kn' ? 'ತಾಂತ್ರಿಕ Google SEO' : 'Technical & On-Page SEO'}
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#5f6368' }}>
+                      {lang === 'kn' ? 'Meta tags, Headings hierarchy, Canonical links & ಮೊಬೈಲ್ ರೆಸ್ಪಾನ್ಸಿವ್‌ನೆಸ್.' : 'Meta tags, heading hierarchy, canonical links, mobile viewport & image alt tags.'}
+                    </div>
+                  </div>
+
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1px solid #dadce0',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '20px',
+                    textAlign: 'left',
+                    boxShadow: '0 1px 3px rgba(60,64,67,0.08)',
+                  }}>
+                    <div style={{ fontSize: '1.4rem', marginBottom: '8px' }}>🤖</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#202124', marginBottom: '4px' }}>
+                      {lang === 'kn' ? 'GEO (AI Search ಆಡಿಟ್)' : 'GEO & AI Search Readiness'}
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#5f6368' }}>
+                      {lang === 'kn' ? 'GPTBot, PerplexityBot, ClaudeBot, Schema Knowledge Graph & llms.txt.' : 'GPTBot, Perplexity, Claude, Schema.org entities & modern /llms.txt verification.'}
+                    </div>
+                  </div>
+
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1px solid #dadce0',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '20px',
+                    textAlign: 'left',
+                    boxShadow: '0 1px 3px rgba(60,64,67,0.08)',
+                  }}>
+                    <div style={{ fontSize: '1.4rem', marginBottom: '8px' }}>⚡</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#202124', marginBottom: '4px' }}>
+                      {lang === 'kn' ? '1-ಕ್ಲಿಕ್ AI ಕೋಡ್ ಜನರೇಟರ್' : '1-Click Instant AI Code'}
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#5f6368' }}>
+                      {lang === 'kn' ? 'ಸರಿಪಡಿಸಿದ robots.txt, llms.txt ಮತ್ತು Schema JSON-LD ಕೋಡ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ.' : 'Export optimized robots.txt, llms.txt and Schema JSON-LD with one click.'}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </>

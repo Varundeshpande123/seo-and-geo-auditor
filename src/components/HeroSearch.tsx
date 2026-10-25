@@ -15,8 +15,8 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
   lang,
 }) => {
   const [mode, setMode] = useState<'single' | 'compare'>('single');
-  const [urlInput, setUrlInput] = useState('somashekhar.in');
-  const [competitorInput, setCompetitorInput] = useState('google.com');
+  const [urlInput, setUrlInput] = useState('');
+  const [competitorInput, setCompetitorInput] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +33,6 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
 
   const handleChipClick = (domain: string) => {
     setUrlInput(domain);
-    onAnalyze(domain);
   };
 
   return (
@@ -147,7 +146,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                 type="text"
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="e.g. somashekhar.in"
+                placeholder={lang === 'kn' ? 'ವೆಬ್‌ಸೈಟ್ URL ನಮೂದಿಸಿ (ಉದಾ: example.com)' : 'Enter website URL (e.g. example.com)'}
                 disabled={isLoading}
                 style={{
                   width: '100%',
@@ -205,7 +204,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                     type="text"
                     value={urlInput}
                     onChange={(e) => setUrlInput(e.target.value)}
-                    placeholder="Your site (e.g. somashekhar.in)"
+                    placeholder={lang === 'kn' ? 'ಮೊದಲ ವೆಬ್‌ಸೈಟ್ (ಉದಾ: mysite.com)' : 'Your site (e.g. mysite.com)'}
                     disabled={isLoading}
                     style={{
                       width: '100%',
@@ -231,7 +230,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                     type="text"
                     value={competitorInput}
                     onChange={(e) => setCompetitorInput(e.target.value)}
-                    placeholder="Competitor (e.g. competitor.com)"
+                    placeholder={lang === 'kn' ? 'ಪ್ರತಿಸ್ಪರ್ಧಿ ವೆಬ್‌ಸೈಟ್ (ಉದಾ: competitor.com)' : 'Competitor (e.g. competitor.com)'}
                     disabled={isLoading}
                     style={{
                       width: '100%',
