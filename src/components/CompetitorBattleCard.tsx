@@ -114,8 +114,8 @@ export const CompetitorBattleCard: React.FC<CompetitorBattleCardProps> = ({ audi
 
       {/* Comparison Grid Table */}
       <div style={{
-        background: 'rgba(255, 255, 255, 0.02)',
-        border: '1px solid var(--border-subtle)',
+        background: '#ffffff',
+        border: '1px solid #dadce0',
         borderRadius: 'var(--radius-md)',
         overflow: 'hidden',
       }}>
@@ -124,15 +124,15 @@ export const CompetitorBattleCard: React.FC<CompetitorBattleCardProps> = ({ audi
           display: 'grid',
           gridTemplateColumns: '2fr 1.5fr 1.5fr',
           padding: '14px 20px',
-          background: 'rgba(0, 0, 0, 0.35)',
-          borderBottom: '1px solid var(--border-subtle)',
+          background: '#f1f3f4',
+          borderBottom: '1px solid #dadce0',
           fontSize: '0.85rem',
           fontWeight: 700,
-          color: 'var(--text-muted)',
+          color: '#5f6368',
         }}>
           <div>{lang === 'kn' ? 'ಪರೀಕ್ಷಾ ಅಂಶ (Metric)' : 'Audit Factor'}</div>
-          <div style={{ color: '#818cf8', textAlign: 'center' }}>{audit1.domain}</div>
-          <div style={{ color: '#38bdf8', textAlign: 'center' }}>{audit2.domain}</div>
+          <div style={{ color: '#1a73e8', textAlign: 'center' }}>{audit1.domain}</div>
+          <div style={{ color: '#137333', textAlign: 'center' }}>{audit2.domain}</div>
         </div>
 
         {/* Rows */}
@@ -143,35 +143,36 @@ export const CompetitorBattleCard: React.FC<CompetitorBattleCardProps> = ({ audi
               display: 'grid',
               gridTemplateColumns: '2fr 1.5fr 1.5fr',
               padding: '12px 20px',
-              borderBottom: idx < metrics.length - 1 ? '1px solid var(--border-subtle)' : 'none',
+              borderBottom: idx < metrics.length - 1 ? '1px solid #dadce0' : 'none',
               fontSize: '0.88rem',
               alignItems: 'center',
+              background: idx % 2 === 0 ? '#ffffff' : '#f8f9fa',
             }}
           >
-            <div style={{ fontWeight: 600, color: '#f1f5f9' }}>{m.title}</div>
+            <div style={{ fontWeight: 600, color: '#202124' }}>{m.title}</div>
             <div style={{
               textAlign: 'center',
               fontWeight: 700,
-              color: m.win1 ? '#34d399' : '#e2e8f0',
+              color: m.win1 ? '#137333' : '#3c4043',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '6px',
             }}>
               <span>{m.val1}</span>
-              {m.win1 && <ArrowUpRight size={14} color="#34d399" />}
+              {m.win1 && <ArrowUpRight size={14} color="#137333" />}
             </div>
             <div style={{
               textAlign: 'center',
               fontWeight: 700,
-              color: !m.win1 ? '#34d399' : '#e2e8f0',
+              color: !m.win1 ? '#137333' : '#3c4043',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '6px',
             }}>
               <span>{m.val2}</span>
-              {!m.win1 && <ArrowUpRight size={14} color="#34d399" />}
+              {!m.win1 && <ArrowUpRight size={14} color="#137333" />}
             </div>
           </div>
         ))}

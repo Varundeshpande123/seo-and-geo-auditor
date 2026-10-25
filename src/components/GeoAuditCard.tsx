@@ -10,7 +10,7 @@ interface GeoAuditCardProps {
 
 export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix }) => {
   return (
-    <div className="glass-panel" style={{ padding: '28px', marginBottom: '28px' }}>
+    <div className="glass-panel" style={{ padding: '28px', marginBottom: '28px', background: '#ffffff' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -18,19 +18,19 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
             width: '38px',
             height: '38px',
             borderRadius: '10px',
-            background: 'rgba(56, 189, 248, 0.15)',
-            border: '1px solid rgba(56, 189, 248, 0.3)',
+            background: '#e8f0fe',
+            border: '1px solid #d2e3fc',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <Bot size={20} color="#38bdf8" />
+            <Bot size={20} color="#1a73e8" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#202124' }}>
               {lang === 'kn' ? 'GEO (AI Search ವಿಸಿಬಿಲಿಟಿ ಆಡಿಟ್)' : 'GEO (Generative Engine Optimization)'}
             </h3>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)' }}>
+            <p style={{ fontSize: '0.82rem', color: '#5f6368' }}>
               ChatGPT, Perplexity, Google Gemini & Claude Citation Readiness
             </p>
           </div>
@@ -42,8 +42,8 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
 
       {/* AI Recommendation Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(56, 189, 248, 0.1) 100%)',
-        border: '1px solid rgba(99, 102, 241, 0.25)',
+        background: '#e8f0fe',
+        border: '1px solid #d2e3fc',
         borderRadius: 'var(--radius-md)',
         padding: '16px',
         marginBottom: '24px',
@@ -51,12 +51,12 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
         alignItems: 'flex-start',
         gap: '12px',
       }}>
-        <Sparkles size={20} color="#818cf8" style={{ flexShrink: 0, marginTop: '2px' }} />
+        <Sparkles size={20} color="#1a73e8" style={{ flexShrink: 0, marginTop: '2px' }} />
         <div>
-          <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#c7d2fe', marginBottom: '4px' }}>
+          <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#174ea6', marginBottom: '4px' }}>
             {lang === 'kn' ? 'AI ಸರ್ಚ್ ಎಂಜಿನ್ ಶಿಫಾರಸು' : 'AI Search Recommendation'}
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '0.85rem', color: '#3c4043' }}>
             {geo.aiRecommendation}
           </div>
         </div>
@@ -70,14 +70,14 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
       }}>
         {/* 1. AI Crawlers Access */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid var(--border-subtle)',
+          background: '#f8f9fa',
+          border: '1px solid #dadce0',
           borderRadius: 'var(--radius-md)',
           padding: '20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem' }}>
-              <Bot size={16} color="#818cf8" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <Bot size={16} color="#1a73e8" />
               <span>AI Crawlers in Robots.txt</span>
             </div>
             <span className={`badge ${geo.aiBotAccess.status === 'good' ? 'badge-good' : 'badge-warning'}`}>
@@ -93,22 +93,23 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  background: 'rgba(0, 0, 0, 0.2)',
+                  background: '#ffffff',
+                  border: '1px solid #e8eaed',
                   padding: '8px 12px',
                   borderRadius: '6px',
                   fontSize: '0.82rem',
                 }}
               >
                 <div>
-                  <span style={{ fontWeight: 600, color: '#f1f5f9' }}>{bot.botName}</span>
-                  <span style={{ color: 'var(--text-dim)', marginLeft: '8px' }}>({bot.aiEngine})</span>
+                  <span style={{ fontWeight: 600, color: '#202124' }}>{bot.botName}</span>
+                  <span style={{ color: '#5f6368', marginLeft: '8px' }}>({bot.aiEngine})</span>
                 </div>
                 {bot.allowed ? (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#34d399' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#137333', fontWeight: 600 }}>
                     <CheckCircle size={14} /> Allowed
                   </span>
                 ) : (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f87171' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#c5221f', fontWeight: 600 }}>
                     <XCircle size={14} /> Blocked
                   </span>
                 )}
@@ -129,14 +130,14 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
 
         {/* 2. Structured Knowledge Graph (Schema.org) */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid var(--border-subtle)',
+          background: '#f8f9fa',
+          border: '1px solid #dadce0',
           borderRadius: 'var(--radius-md)',
           padding: '20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem' }}>
-              <Layers size={16} color="#38bdf8" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <Layers size={16} color="#1a73e8" />
               <span>Knowledge Graph (Schema)</span>
             </div>
             <span className={`badge ${geo.structuredData.status === 'good' ? 'badge-good' : 'badge-critical'}`}>
@@ -144,7 +145,7 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
             </span>
           </div>
 
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
+          <p style={{ fontSize: '0.82rem', color: '#5f6368', marginBottom: '12px' }}>
             {geo.structuredData.feedback}
           </p>
 
@@ -156,7 +157,7 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
                 </span>
               ))
             ) : (
-              <span style={{ fontSize: '0.82rem', color: '#f87171' }}>
+              <span style={{ fontSize: '0.82rem', color: '#c5221f' }}>
                 ❌ {lang === 'kn' ? 'ಯಾವುದೇ Schema ಪತ್ತೆಯಾಗಿಲ್ಲ' : 'No Schema detected'}
               </span>
             )}
@@ -175,14 +176,14 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
 
         {/* 3. Citation Readiness */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid var(--border-subtle)',
+          background: '#f8f9fa',
+          border: '1px solid #dadce0',
           borderRadius: 'var(--radius-md)',
           padding: '20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem' }}>
-              <Sparkles size={16} color="#34d399" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <Sparkles size={16} color="#137333" />
               <span>Citation Extractability</span>
             </div>
             <span className="badge badge-primary">
@@ -191,21 +192,21 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border-subtle)' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Direct Answer / TL;DR:</span>
-              <span style={{ color: geo.citationReadiness.directAnswerBlocksFound ? '#34d399' : '#f87171' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #dadce0' }}>
+              <span style={{ color: '#5f6368' }}>Direct Answer / TL;DR:</span>
+              <span style={{ color: geo.citationReadiness.directAnswerBlocksFound ? '#137333' : '#c5221f', fontWeight: 600 }}>
                 {geo.citationReadiness.directAnswerBlocksFound ? 'Present' : 'Missing'}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border-subtle)' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Conversational Q&A Headings:</span>
-              <span style={{ color: geo.citationReadiness.faqOrQaFormatFound ? '#34d399' : '#fbbf24' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #dadce0' }}>
+              <span style={{ color: '#5f6368' }}>Conversational Q&A Headings:</span>
+              <span style={{ color: geo.citationReadiness.faqOrQaFormatFound ? '#137333' : '#b06000', fontWeight: 600 }}>
                 {geo.citationReadiness.faqOrQaFormatFound ? 'Detected' : 'Recommended'}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Data Tables & Lists:</span>
-              <span style={{ color: '#38bdf8' }}>
+              <span style={{ color: '#5f6368' }}>Data Tables & Lists:</span>
+              <span style={{ color: '#1a73e8', fontWeight: 600 }}>
                 {geo.citationReadiness.listsCount} Lists {geo.citationReadiness.tabularDataFound ? '+ Tables' : ''}
               </span>
             </div>

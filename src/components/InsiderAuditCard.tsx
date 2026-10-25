@@ -30,17 +30,17 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
             width: '38px',
             height: '38px',
             borderRadius: '10px',
-            background: 'rgba(236, 72, 153, 0.15)',
-            border: '1px solid rgba(236, 72, 153, 0.3)',
+            background: '#e8f0fe',
+            border: '1px solid #d2e3fc',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <Sparkles size={20} color="#ec4899" />
+            <Sparkles size={20} color="#1a73e8" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
                 {lang === 'kn' ? 'Advanced Insider ಆಡಿಟ್ (ಸೀಕ್ರೆಟ್ ಮೆಟ್ರಿಕ್ಸ್)' : 'Advanced Insider & Secret Metrics'}
               </h3>
               <span className="badge badge-primary" style={{ fontSize: '0.7rem' }}>PRO INSIGHTS</span>
@@ -65,14 +65,14 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
       }}>
         {/* 1. Information Gain & Content Depth */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: '#f8f9fa',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem' }}>
-              <FileText size={16} color="#ec4899" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <FileText size={16} color="#1a73e8" />
               <span>Information Gain</span>
             </div>
             <span className={`badge ${getBadgeClass(insider.informationGain.status)}`}>
@@ -87,11 +87,11 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-dim)' }}>
               <span>Reading Time:</span>
-              <span style={{ color: '#f1f5f9' }}>~{insider.informationGain.readingTimeMin} min</span>
+              <span style={{ color: '#202124', fontWeight: 600 }}>~{insider.informationGain.readingTimeMin} min</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-dim)' }}>
               <span>Vocabulary Variety:</span>
-              <span style={{ color: '#38bdf8' }}>{insider.informationGain.lexicalRichnessPercent}% unique</span>
+              <span style={{ color: '#1a73e8', fontWeight: 600 }}>{insider.informationGain.lexicalRichnessPercent}% unique</span>
             </div>
           </div>
 
@@ -106,9 +106,9 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
                   <span
                     key={i}
                     style={{
-                      background: kw.isOverOptimized ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                      border: kw.isOverOptimized ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid var(--border-subtle)',
-                      color: kw.isOverOptimized ? '#f87171' : '#e2e8f0',
+                      background: kw.isOverOptimized ? '#fce8e6' : '#ffffff',
+                      border: kw.isOverOptimized ? '1px solid #fad2cf' : '1px solid var(--border-subtle)',
+                      color: kw.isOverOptimized ? '#c5221f' : '#202124',
                       padding: '2px 8px',
                       borderRadius: '4px',
                       fontSize: '0.75rem',
@@ -128,14 +128,14 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
 
         {/* 2. Crawl Budget & DOM Architecture */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: '#f8f9fa',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem' }}>
-              <Cpu size={16} color="#818cf8" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <Cpu size={16} color="#1a73e8" />
               <span>DOM & Crawl Budget</span>
             </div>
             <span className={`badge ${insider.domArchitecture.crawlBudgetEfficiency === 'Optimal' ? 'badge-good' : 'badge-warning'}`}>
@@ -150,25 +150,25 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-dim)' }}>
               <span>Total DOM Nodes:</span>
-              <span style={{ color: '#f1f5f9' }}>{insider.domArchitecture.totalElements} tags</span>
+              <span style={{ color: '#202124', fontWeight: 600 }}>{insider.domArchitecture.totalElements} tags</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-dim)' }}>
               <span>Text to HTML Ratio:</span>
-              <span style={{ color: '#34d399' }}>{insider.domArchitecture.textToHtmlRatio}%</span>
+              <span style={{ color: '#137333', fontWeight: 600 }}>{insider.domArchitecture.textToHtmlRatio}%</span>
             </div>
           </div>
         </div>
 
         {/* 3. Security Headers */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: '#f8f9fa',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem' }}>
-              <Lock size={16} color="#34d399" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <Lock size={16} color="#137333" />
               <span>Security Trust Headers</span>
             </div>
             <span className="badge badge-primary">
@@ -179,19 +179,19 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>HSTS (Strict HTTPS):</span>
-              <span style={{ color: insider.securityHeaders.hsts ? '#34d399' : '#f87171' }}>
+              <span style={{ color: insider.securityHeaders.hsts ? '#137333' : '#c5221f', fontWeight: 600 }}>
                 {insider.securityHeaders.hsts ? 'Active' : 'Missing'}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Content-Security-Policy:</span>
-              <span style={{ color: insider.securityHeaders.csp ? '#34d399' : '#fbbf24' }}>
+              <span style={{ color: insider.securityHeaders.csp ? '#137333' : '#b06000', fontWeight: 600 }}>
                 {insider.securityHeaders.csp ? 'Configured' : 'Recommended'}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>X-Frame-Options:</span>
-              <span style={{ color: insider.securityHeaders.xFrameOptions ? '#34d399' : '#94a3b8' }}>
+              <span style={{ color: insider.securityHeaders.xFrameOptions ? '#137333' : '#70757a', fontWeight: 600 }}>
                 {insider.securityHeaders.xFrameOptions ? 'Protected' : 'Not set'}
               </span>
             </div>
@@ -200,13 +200,13 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
 
         {/* 4. AI Hallucination Risk */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: '#f8f9fa',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
               <ShieldAlert size={16} color={getRiskColor(insider.aiHallucinationRisk.riskLevel)} />
               <span>AI Hallucination Risk</span>
             </div>
@@ -229,7 +229,7 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
 
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-dim)' }}>
             <span>Factual Grounding:</span>
-            <span style={{ color: '#38bdf8', fontWeight: 600 }}>{insider.aiHallucinationRisk.factDensityScore}% Clarity</span>
+            <span style={{ color: '#1a73e8', fontWeight: 600 }}>{insider.aiHallucinationRisk.factDensityScore}% Clarity</span>
           </div>
         </div>
       </div>

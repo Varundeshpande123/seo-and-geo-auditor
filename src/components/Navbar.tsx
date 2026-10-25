@@ -16,39 +16,39 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   return (
     <header style={{
-      borderBottom: '1px solid var(--border-subtle)',
-      background: 'rgba(10, 13, 20, 0.75)',
-      backdropFilter: 'blur(12px)',
+      borderBottom: '1px solid #dadce0',
+      background: '#ffffff',
       position: 'sticky',
       top: 0,
       zIndex: 50,
-      padding: '16px 0',
+      padding: '14px 0',
+      boxShadow: '0 1px 2px 0 rgba(60, 64, 67, 0.1)',
     }}>
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #6366f1, #10b981)',
+            width: '40px',
+            height: '40px',
+            borderRadius: '10px',
+            background: 'linear-gradient(135deg, #1a73e8, #137333)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 15px rgba(99, 102, 241, 0.35)',
+            boxShadow: '0 2px 6px rgba(26, 115, 232, 0.3)',
           }}>
-            <Sparkles size={22} color="#ffffff" />
+            <Sparkles size={20} color="#ffffff" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
-                SEO & GEO <span style={{ color: '#38bdf8' }}>Auditor</span>
+              <span style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em', color: '#202124' }}>
+                SEO & GEO <span style={{ color: '#1a73e8' }}>Auditor</span>
               </span>
               <span className="badge badge-primary" style={{ fontSize: '0.68rem', padding: '2px 8px' }}>
                 Edge 2.0
               </span>
             </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ fontSize: '0.78rem', color: '#5f6368', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Globe size={12} />
               <span>seo.somashekhar.in</span>
             </div>
@@ -62,12 +62,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              background: 'rgba(16, 185, 129, 0.1)',
-              border: '1px solid rgba(16, 185, 129, 0.25)',
+              background: '#e6f4ea',
+              border: '1px solid #ceead6',
               padding: '5px 12px',
               borderRadius: 'var(--radius-full)',
               fontSize: '0.8rem',
-              color: '#34d399',
+              color: '#137333',
+              fontWeight: 500,
             }}>
               <UserCheck size={14} />
               <span>somu1008</span>
@@ -77,17 +78,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Language Switcher */}
           <div style={{
             display: 'flex',
-            background: 'rgba(255, 255, 255, 0.06)',
+            background: '#f1f3f4',
             borderRadius: 'var(--radius-md)',
             padding: '3px',
-            border: '1px solid var(--border-subtle)',
+            border: '1px solid #dadce0',
           }}>
             <button
               onClick={() => setLang('kn')}
               style={{
                 border: 'none',
-                background: lang === 'kn' ? 'var(--primary)' : 'transparent',
-                color: lang === 'kn' ? '#ffffff' : 'var(--text-muted)',
+                background: lang === 'kn' ? '#1a73e8' : 'transparent',
+                color: lang === 'kn' ? '#ffffff' : '#5f6368',
                 padding: '4px 12px',
                 borderRadius: '8px',
                 fontSize: '0.82rem',
@@ -102,8 +103,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setLang('en')}
               style={{
                 border: 'none',
-                background: lang === 'en' ? 'var(--primary)' : 'transparent',
-                color: lang === 'en' ? '#ffffff' : 'var(--text-muted)',
+                background: lang === 'en' ? '#1a73e8' : 'transparent',
+                color: lang === 'en' ? '#ffffff' : '#5f6368',
                 padding: '4px 12px',
                 borderRadius: '8px',
                 fontSize: '0.82rem',

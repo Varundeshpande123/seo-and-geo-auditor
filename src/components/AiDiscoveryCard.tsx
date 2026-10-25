@@ -38,17 +38,17 @@ export const AiDiscoveryCard: React.FC<AiDiscoveryCardProps> = ({ geo, lang }) =
             width: '40px',
             height: '40px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #06b6d4, #6366f1)',
+            background: '#e8f0fe',
+            border: '1px solid #d2e3fc',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 15px rgba(6, 182, 212, 0.35)',
           }}>
-            <Sparkles size={22} color="#ffffff" />
+            <Sparkles size={22} color="#1a73e8" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
                 {lang === 'kn' ? 'AI Share of Voice & ಪ್ರಾಂಪ್ಟ್ ಡಿಸ್ಕವರಿ' : 'AI Share of Voice & Prompt Discovery'}
               </h3>
               <span className="badge badge-primary" style={{ fontSize: '0.7rem' }}>NEW ENTERPRISE GEO</span>
@@ -67,7 +67,7 @@ export const AiDiscoveryCard: React.FC<AiDiscoveryCardProps> = ({ geo, lang }) =
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            background: 'rgba(255, 255, 255, 0.04)',
+            background: '#f8f9fa',
             padding: '8px 16px',
             borderRadius: 'var(--radius-full)',
             border: '1px solid var(--border-subtle)',
@@ -88,7 +88,7 @@ export const AiDiscoveryCard: React.FC<AiDiscoveryCardProps> = ({ geo, lang }) =
       {/* Share of Voice Progress Bar */}
       {geo.shareOfVoice && (
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: '#f8f9fa',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '16px 20px',
@@ -101,14 +101,14 @@ export const AiDiscoveryCard: React.FC<AiDiscoveryCardProps> = ({ geo, lang }) =
           <div style={{
             width: '100%',
             height: '8px',
-            background: 'rgba(255, 255, 255, 0.08)',
+            background: '#dadce0',
             borderRadius: '9999px',
             overflow: 'hidden',
           }}>
             <div style={{
               width: `${geo.shareOfVoice.percentage}%`,
               height: '100%',
-              background: `linear-gradient(90deg, #6366f1, ${getSovColor(geo.shareOfVoice.percentage)})`,
+              background: `linear-gradient(90deg, #1a73e8, ${getSovColor(geo.shareOfVoice.percentage)})`,
               borderRadius: '9999px',
               transition: 'width 0.8s ease',
             }} />
@@ -121,13 +121,13 @@ export const AiDiscoveryCard: React.FC<AiDiscoveryCardProps> = ({ geo, lang }) =
         <div style={{
           fontSize: '0.92rem',
           fontWeight: 700,
-          color: '#f1f5f9',
+          color: '#202124',
           marginBottom: '14px',
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
         }}>
-          <HelpCircle size={18} color="#38bdf8" />
+          <HelpCircle size={18} color="#1a73e8" />
           <span>{lang === 'kn' ? 'AI ಸರ್ಚ್ ಎಂಜಿನ್‌ಗಳಲ್ಲಿ ಜನರು ಕೇಳುವ ಪ್ರಮುಖ ಪ್ರಶ್ನೆಗಳು:' : 'Discovered AI Prompts & Questions:'}</span>
         </div>
 
@@ -140,7 +140,7 @@ export const AiDiscoveryCard: React.FC<AiDiscoveryCardProps> = ({ geo, lang }) =
             <div
               key={idx}
               style={{
-                background: 'rgba(255, 255, 255, 0.02)',
+                background: '#f8f9fa',
                 border: '1px solid var(--border-subtle)',
                 borderRadius: 'var(--radius-md)',
                 padding: '16px',
@@ -148,21 +148,27 @@ export const AiDiscoveryCard: React.FC<AiDiscoveryCardProps> = ({ geo, lang }) =
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 gap: '12px',
-                transition: 'border-color 0.2s',
+                transition: 'border-color 0.2s, box-shadow 0.2s',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)')}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-subtle)')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#1a73e8';
+                e.currentTarget.style.boxShadow = '0 1px 6px rgba(26, 115, 232, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                 <span className={`badge ${getIntentBadgeClass(item.intent)}`} style={{ fontSize: '0.72rem' }}>
                   {item.intent}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8', background: 'rgba(0, 0, 0, 0.25)', padding: '2px 8px', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#5f6368', background: '#e8eaed', padding: '2px 8px', borderRadius: '4px', fontWeight: 500 }}>
                   🎯 {item.suggestedEngine}
                 </span>
               </div>
 
-              <div style={{ fontSize: '0.9rem', color: '#f8fafc', fontWeight: 500, lineHeight: 1.4 }}>
+              <div style={{ fontSize: '0.9rem', color: '#202124', fontWeight: 500, lineHeight: 1.4 }}>
                 "{item.prompt}"
               </div>
 
@@ -175,8 +181,8 @@ export const AiDiscoveryCard: React.FC<AiDiscoveryCardProps> = ({ geo, lang }) =
                 >
                   {copiedIdx === idx ? (
                     <>
-                      <Check size={14} color="#34d399" />
-                      <span style={{ color: '#34d399' }}>{lang === 'kn' ? 'ಕಾಪಿ ಮಾಡಲಾಗಿದೆ!' : 'Copied!'}</span>
+                      <Check size={14} color="#137333" />
+                      <span style={{ color: '#137333' }}>{lang === 'kn' ? 'ಕಾಪಿ ಮಾಡಲಾಗಿದೆ!' : 'Copied!'}</span>
                     </>
                   ) : (
                     <>

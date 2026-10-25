@@ -37,24 +37,25 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
   };
 
   return (
-    <section style={{ padding: '60px 0 40px', textAlign: 'center' }}>
-      <div className="container" style={{ maxWidth: '860px' }}>
+    <section style={{ padding: '48px 0 36px', textAlign: 'center' }}>
+      <div className="container" style={{ maxWidth: '840px' }}>
         {/* Mode Switcher Toggle */}
         <div style={{
           display: 'inline-flex',
-          background: 'rgba(255, 255, 255, 0.05)',
+          background: '#ffffff',
           padding: '4px',
           borderRadius: 'var(--radius-full)',
-          border: '1px solid var(--border-subtle)',
+          border: '1px solid #dadce0',
           marginBottom: '20px',
+          boxShadow: '0 1px 3px rgba(60,64,67,0.1)',
         }}>
           <button
             type="button"
             onClick={() => setMode('single')}
             style={{
               border: 'none',
-              background: mode === 'single' ? 'var(--primary)' : 'transparent',
-              color: mode === 'single' ? '#ffffff' : 'var(--text-muted)',
+              background: mode === 'single' ? '#1a73e8' : 'transparent',
+              color: mode === 'single' ? '#ffffff' : '#5f6368',
               padding: '6px 18px',
               borderRadius: 'var(--radius-full)',
               fontSize: '0.85rem',
@@ -74,8 +75,8 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
             onClick={() => setMode('compare')}
             style={{
               border: 'none',
-              background: mode === 'compare' ? 'linear-gradient(135deg, #f59e0b, #ef4444)' : 'transparent',
-              color: mode === 'compare' ? '#ffffff' : 'var(--text-muted)',
+              background: mode === 'compare' ? '#1a73e8' : 'transparent',
+              color: mode === 'compare' ? '#ffffff' : '#5f6368',
               padding: '6px 18px',
               borderRadius: 'var(--radius-full)',
               fontSize: '0.85rem',
@@ -94,40 +95,33 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
 
         {/* Headline */}
         <h1 style={{
-          fontSize: 'clamp(2.2rem, 5vw, 3.4rem)',
-          fontWeight: 800,
-          lineHeight: 1.15,
-          letterSpacing: '-0.03em',
-          marginBottom: '20px',
+          fontSize: 'clamp(2rem, 4.5vw, 3rem)',
+          fontWeight: 700,
+          lineHeight: 1.2,
+          color: '#202124',
+          letterSpacing: '-0.02em',
+          marginBottom: '16px',
         }}>
           {lang === 'kn' ? (
             <>
-              ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್‌ನ <span style={{
-                background: 'linear-gradient(135deg, #818cf8 0%, #38bdf8 50%, #34d399 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}>SEO ಮತ್ತು GEO (AI Search)</span> ಪರೀಕ್ಷಿಸಿ
+              ವೆಬ್‌ಸೈಟ್‌ನ <span style={{ color: '#1a73e8' }}>Google SEO</span> ಮತ್ತು <span style={{ color: '#137333' }}>GEO (AI Search)</span> ಪರೀಕ್ಷಿಸಿ
             </>
           ) : (
             <>
-              Audit Your Website for <span style={{
-                background: 'linear-gradient(135deg, #818cf8 0%, #38bdf8 50%, #34d399 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}>Google SEO & Generative AI</span>
+              Make your web pages fast on <span style={{ color: '#1a73e8' }}>Google</span> & visible on <span style={{ color: '#137333' }}>AI Search</span>
             </>
           )}
         </h1>
 
         <p style={{
-          fontSize: '1.1rem',
-          color: 'var(--text-muted)',
+          fontSize: '1.05rem',
+          color: '#5f6368',
           maxWidth: '680px',
-          margin: '0 auto 36px',
+          margin: '0 auto 32px',
         }}>
           {lang === 'kn'
-            ? 'Google ಸರ್ಚ್ ಜೊತೆಗೆ ChatGPT, Perplexity ಮತ್ತು Gemini AI ಗಳು ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಅನ್ನು ಹೇಗೆ ಗುರುತಿಸುತ್ತವೆ ಎಂದು ಆಳವಾಗಿ ತಿಳಿಯಿರಿ.'
-            : 'Find out how Google ranks your page and whether ChatGPT, Perplexity, and Gemini cite your brand.'}
+            ? 'ಗೂಗಲ್ ಪೇಜ್‌ಸ್ಪೀಡ್ ಮಾದರಿಯಲ್ಲಿ ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್‌ನ ಆನ್-ಪೇಜ್, ತಾಂತ್ರಿಕ ಮತ್ತು AI ಸರ್ಚ್ ವಿಸಿಬಿಲಿಟಿ ಆಡಿಟ್ ಮಾಡಿ.'
+            : 'PageSpeed Insights and Generative Engine Optimization audit for desktop and mobile devices.'}
         </p>
 
         {/* Search Bar Form */}
@@ -142,13 +136,13 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '2px solid rgba(99, 102, 241, 0.4)',
+              background: '#ffffff',
+              border: '1px solid #dadce0',
               borderRadius: 'var(--radius-md)',
               padding: '6px 8px 6px 18px',
-              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
+              boxShadow: '0 1px 3px 0 rgba(60,64,67,0.2), 0 4px 8px 3px rgba(60,64,67,0.06)',
             }}>
-              <Search size={20} color="var(--text-muted)" style={{ flexShrink: 0, marginRight: '10px' }} />
+              <Search size={20} color="#5f6368" style={{ flexShrink: 0, marginRight: '10px' }} />
               <input
                 type="text"
                 value={urlInput}
@@ -160,7 +154,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                   background: 'transparent',
                   border: 'none',
                   outline: 'none',
-                  color: '#ffffff',
+                  color: '#202124',
                   fontSize: '1.05rem',
                   fontFamily: 'var(--font-sans)',
                 }}
@@ -178,7 +172,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                   </>
                 ) : (
                   <>
-                    {lang === 'kn' ? 'ಆಡಿಟ್ ಮಾಡಿ' : 'Analyze Now'}
+                    {lang === 'kn' ? 'ಆಡಿಟ್ ಮಾಡಿ' : 'Analyze'}
                     <ArrowRight size={18} />
                   </>
                 )}
@@ -190,23 +184,23 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
               display: 'flex',
               flexDirection: 'column',
               gap: '12px',
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '2px solid rgba(245, 158, 11, 0.4)',
+              background: '#ffffff',
+              border: '1px solid #dadce0',
               borderRadius: 'var(--radius-md)',
               padding: '16px',
-              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
+              boxShadow: '0 1px 3px 0 rgba(60,64,67,0.2)',
             }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid var(--border-subtle)',
+                  background: '#f8f9fa',
+                  border: '1px solid #dadce0',
                   borderRadius: 'var(--radius-sm)',
                   padding: '10px 14px',
                   gap: '8px',
                 }}>
-                  <span style={{ fontSize: '0.8rem', color: '#818cf8', fontWeight: 700 }}>URL 1:</span>
+                  <span style={{ fontSize: '0.8rem', color: '#1a73e8', fontWeight: 700 }}>URL 1:</span>
                   <input
                     type="text"
                     value={urlInput}
@@ -218,7 +212,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                       background: 'transparent',
                       border: 'none',
                       outline: 'none',
-                      color: '#ffffff',
+                      color: '#202124',
                       fontSize: '0.95rem',
                     }}
                   />
@@ -226,13 +220,13 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid var(--border-subtle)',
+                  background: '#f8f9fa',
+                  border: '1px solid #dadce0',
                   borderRadius: 'var(--radius-sm)',
                   padding: '10px 14px',
                   gap: '8px',
                 }}>
-                  <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontWeight: 700 }}>URL 2:</span>
+                  <span style={{ fontSize: '0.8rem', color: '#137333', fontWeight: 700 }}>URL 2:</span>
                   <input
                     type="text"
                     value={competitorInput}
@@ -244,7 +238,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                       background: 'transparent',
                       border: 'none',
                       outline: 'none',
-                      color: '#ffffff',
+                      color: '#202124',
                       fontSize: '0.95rem',
                     }}
                   />
@@ -254,12 +248,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                 type="submit"
                 disabled={isLoading || !urlInput.trim() || !competitorInput.trim()}
                 className="btn btn-primary"
-                style={{
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
-                  padding: '14px',
-                  fontSize: '1rem',
-                  boxShadow: '0 4px 20px rgba(245, 158, 11, 0.35)',
-                }}
+                style={{ padding: '12px', fontSize: '1rem' }}
               >
                 {isLoading ? (
                   <>
@@ -285,8 +274,8 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
               gap: '8px',
               flexWrap: 'wrap',
               fontSize: '0.85rem',
-              color: 'var(--text-dim)',
-              marginTop: '8px',
+              color: '#5f6368',
+              marginTop: '6px',
             }}>
               <span>{lang === 'kn' ? 'ಉಚಿತ ಟೆಸ್ಟ್ ಮಾಡಿ:' : 'Try instant demo:'}</span>
               {['somashekhar.in', 'google.com', 'github.com'].map((domain) => (
@@ -295,17 +284,23 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                   type="button"
                   onClick={() => handleChipClick(domain)}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid #dadce0',
                     borderRadius: 'var(--radius-full)',
                     padding: '3px 12px',
-                    color: 'var(--text-muted)',
+                    color: '#3c4043',
                     fontSize: '0.8rem',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#38bdf8')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#1a73e8';
+                    e.currentTarget.style.color = '#1a73e8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#dadce0';
+                    e.currentTarget.style.color = '#3c4043';
+                  }}
                 >
                   {domain}
                 </button>
@@ -317,17 +312,18 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
         {/* Scan Progress Status */}
         {isLoading && (
           <div className="animate-fade-in" style={{
-            marginTop: '28px',
-            background: 'rgba(18, 25, 38, 0.8)',
-            border: '1px solid var(--border-focus)',
+            marginTop: '24px',
+            background: '#ffffff',
+            border: '1px solid #1a73e8',
             borderRadius: 'var(--radius-md)',
-            padding: '16px 24px',
+            padding: '14px 22px',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '12px',
+            boxShadow: '0 2px 8px rgba(26, 115, 232, 0.15)',
           }}>
             <span className="pulse-dot"></span>
-            <span style={{ fontSize: '0.95rem', color: '#e0e7ff', fontWeight: 500 }}>
+            <span style={{ fontSize: '0.92rem', color: '#1a73e8', fontWeight: 500 }}>
               {scanStep}
             </span>
           </div>

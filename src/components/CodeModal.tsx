@@ -28,8 +28,8 @@ export const CodeModal: React.FC<CodeModalProps> = ({ issue, onClose, lang }) =>
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.75)',
-      backdropFilter: 'blur(8px)',
+      background: 'rgba(32, 33, 36, 0.6)',
+      backdropFilter: 'blur(4px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -40,8 +40,9 @@ export const CodeModal: React.FC<CodeModalProps> = ({ issue, onClose, lang }) =>
         maxWidth: '680px',
         width: '100%',
         padding: '28px',
-        background: '#0d131f',
-        border: '1px solid var(--border-focus)',
+        background: '#ffffff',
+        border: '1px solid #dadce0',
+        boxShadow: '0 4px 16px rgba(60, 64, 67, 0.25)',
         position: 'relative',
         maxHeight: '90vh',
         overflowY: 'auto',
@@ -55,7 +56,7 @@ export const CodeModal: React.FC<CodeModalProps> = ({ issue, onClose, lang }) =>
             right: '20px',
             background: 'transparent',
             border: 'none',
-            color: 'var(--text-muted)',
+            color: '#5f6368',
             cursor: 'pointer',
           }}
         >
@@ -63,30 +64,30 @@ export const CodeModal: React.FC<CodeModalProps> = ({ issue, onClose, lang }) =>
         </button>
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
           <div style={{
             width: '36px',
             height: '36px',
             borderRadius: '8px',
-            background: 'rgba(99, 102, 241, 0.2)',
+            background: '#e8f0fe',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <FileCode size={20} color="#818cf8" />
+            <FileCode size={20} color="#1a73e8" />
           </div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>{issue.title}</h3>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#202124' }}>{issue.title}</h3>
         </div>
 
         {/* Description */}
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', marginBottom: '16px' }}>
+        <p style={{ color: '#5f6368', fontSize: '0.92rem', marginBottom: '16px' }}>
           {issue.description}
         </p>
 
         {/* Recommendation */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.03)',
-          borderLeft: '3px solid #818cf8',
+          background: '#e8f0fe',
+          borderLeft: '4px solid #1a73e8',
           padding: '12px 16px',
           borderRadius: '4px',
           marginBottom: '20px',
@@ -94,8 +95,8 @@ export const CodeModal: React.FC<CodeModalProps> = ({ issue, onClose, lang }) =>
           alignItems: 'flex-start',
           gap: '10px',
         }}>
-          <Lightbulb size={18} color="#818cf8" style={{ flexShrink: 0, marginTop: '2px' }} />
-          <div style={{ fontSize: '0.88rem', color: '#e0e7ff' }}>
+          <Lightbulb size={18} color="#1a73e8" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ fontSize: '0.88rem', color: '#174ea6' }}>
             {issue.recommendation}
           </div>
         </div>
@@ -109,7 +110,7 @@ export const CodeModal: React.FC<CodeModalProps> = ({ issue, onClose, lang }) =>
               justifyContent: 'space-between',
               marginBottom: '8px',
             }}>
-              <span style={{ fontSize: '0.82rem', color: 'var(--text-dim)', fontWeight: 600 }}>
+              <span style={{ fontSize: '0.82rem', color: '#5f6368', fontWeight: 600 }}>
                 {lang === 'kn' ? 'ನೇರವಾಗಿ ಕಾಪಿ ಮಾಡಲು ರೆಡಿ ಕೋಡ್:' : 'Ready-to-use Code:'}
               </span>
               <button
@@ -119,8 +120,8 @@ export const CodeModal: React.FC<CodeModalProps> = ({ issue, onClose, lang }) =>
               >
                 {copied ? (
                   <>
-                    <Check size={14} color="#34d399" />
-                    <span style={{ color: '#34d399' }}>{lang === 'kn' ? 'ಕಾಪಿ ಮಾಡಲಾಗಿದೆ!' : 'Copied!'}</span>
+                    <Check size={14} color="#137333" />
+                    <span style={{ color: '#137333' }}>{lang === 'kn' ? 'ಕಾಪಿ ಮಾಡಲಾಗಿದೆ!' : 'Copied!'}</span>
                   </>
                 ) : (
                   <>
@@ -135,7 +136,7 @@ export const CodeModal: React.FC<CodeModalProps> = ({ issue, onClose, lang }) =>
             </pre>
           </div>
         ) : (
-          <div style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>
+          <div style={{ color: '#5f6368', fontSize: '0.85rem' }}>
             {lang === 'kn' ? 'ಕೋಡ್ ಸ್ನಿಪ್ಪೆಟ್ ಅಗತ್ಯವಿಲ್ಲ. ಮೇಲಿನ ಸೂಚನೆ ಪಾಲಿಸಿ.' : 'No code snippet required. Follow instructions above.'}
           </div>
         )}

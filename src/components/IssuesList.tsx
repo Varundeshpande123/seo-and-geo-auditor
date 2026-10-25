@@ -35,34 +35,34 @@ export const IssuesList: React.FC<IssuesListProps> = ({ issues, lang, onSelectIs
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '16px 20px',
-                background: 'rgba(255, 255, 255, 0.02)',
-                border: '1px solid var(--border-subtle)',
+                background: '#ffffff',
+                border: '1px solid #dadce0',
                 borderRadius: 'var(--radius-md)',
                 gap: '16px',
                 flexWrap: 'wrap',
                 transition: 'all 0.2s',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                e.currentTarget.style.borderColor = '#1a73e8';
+                e.currentTarget.style.background = '#f8f9fa';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+                e.currentTarget.style.borderColor = '#dadce0';
+                e.currentTarget.style.background = '#ffffff';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, minWidth: '260px' }}>
                 {isCritical ? (
-                  <AlertCircle size={22} color="#f87171" style={{ flexShrink: 0 }} />
+                  <AlertCircle size={22} color="#c5221f" style={{ flexShrink: 0 }} />
                 ) : isWarning ? (
-                  <AlertTriangle size={22} color="#fbbf24" style={{ flexShrink: 0 }} />
+                  <AlertTriangle size={22} color="#b06000" style={{ flexShrink: 0 }} />
                 ) : (
-                  <CheckCircle size={22} color="#38bdf8" style={{ flexShrink: 0 }} />
+                  <CheckCircle size={22} color="#1a73e8" style={{ flexShrink: 0 }} />
                 )}
 
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.95rem', color: '#f1f5f9' }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.95rem', color: '#202124' }}>
                       {issue.title}
                     </span>
                     <span className={`badge ${isCritical ? 'badge-critical' : isWarning ? 'badge-warning' : 'badge-primary'}`} style={{ fontSize: '0.7rem' }}>

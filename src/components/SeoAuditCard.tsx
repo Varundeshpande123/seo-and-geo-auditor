@@ -24,16 +24,16 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
             width: '38px',
             height: '38px',
             borderRadius: '10px',
-            background: 'rgba(99, 102, 241, 0.15)',
-            border: '1px solid rgba(99, 102, 241, 0.3)',
+            background: '#e8f0fe',
+            border: '1px solid #d2e3fc',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <Search size={20} color="#818cf8" />
+            <Search size={20} color="#1a73e8" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
               {lang === 'kn' ? 'Google ಆನ್-ಪೇಜ್ ಮತ್ತು ತಾಂತ್ರಿಕ SEO' : 'On-Page & Technical SEO'}
             </h3>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)' }}>
@@ -50,13 +50,13 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* Title */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: '#f8f9fa',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '16px 20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#f1f5f9' }}>
+            <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
               Page Title ({seo.title.length} characters)
             </span>
             <span className={`badge ${getBadgeClass(seo.title.status)}`}>
@@ -83,13 +83,13 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
 
         {/* Meta Description */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: '#f8f9fa',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '16px 20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#f1f5f9' }}>
+            <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
               Meta Description ({seo.description.length} characters)
             </span>
             <span className={`badge ${getBadgeClass(seo.description.status)}`}>
@@ -116,13 +116,13 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
 
         {/* Headings Hierarchy */}
         <div style={{
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: '#f8f9fa',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
           padding: '16px 20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#f1f5f9' }}>
+            <span style={{ fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
               Heading Hierarchy ({seo.headings.h1Count} H1, {seo.headings.h2Count} H2, {seo.headings.h3Count} H3)
             </span>
             <span className={`badge ${getBadgeClass(seo.headings.status)}`}>
@@ -151,14 +151,14 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
         }}>
           {/* Canonical */}
           <div style={{
-            background: 'rgba(255, 255, 255, 0.02)',
+            background: '#f8f9fa',
             border: '1px solid var(--border-subtle)',
             borderRadius: 'var(--radius-md)',
             padding: '16px 20px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Link2 size={16} color="#818cf8" /> Canonical Link
+              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#202124', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Link2 size={16} color="#1a73e8" /> Canonical Link
               </span>
               <span className={`badge ${getBadgeClass(seo.canonical.status)}`}>
                 {seo.canonical.status}
@@ -171,14 +171,14 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
 
           {/* Image Alt */}
           <div style={{
-            background: 'rgba(255, 255, 255, 0.02)',
+            background: '#f8f9fa',
             border: '1px solid var(--border-subtle)',
             borderRadius: 'var(--radius-md)',
             padding: '16px 20px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Image size={16} color="#34d399" /> Image Alt Tags
+              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#202124', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Image size={16} color="#137333" /> Image Alt Tags
               </span>
               <span className={`badge ${seo.images.missingAlt === 0 ? 'badge-good' : 'badge-warning'}`}>
                 {seo.images.missingAlt === 0 ? 'All Good' : `${seo.images.missingAlt} Missing`}
@@ -198,14 +198,14 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
         }}>
           {/* Mobile Viewport */}
           <div style={{
-            background: 'rgba(255, 255, 255, 0.02)',
+            background: '#f8f9fa',
             border: '1px solid var(--border-subtle)',
             borderRadius: 'var(--radius-md)',
             padding: '16px 20px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Link2 size={16} color="#38bdf8" /> Mobile Viewport
+              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#202124', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Link2 size={16} color="#1a73e8" /> Mobile Viewport
               </span>
               <span className={`badge ${getBadgeClass(seo.mobileViewport?.status || 'good')}`}>
                 {seo.mobileViewport?.hasViewport ? 'Responsive' : 'Missing'}
@@ -218,14 +218,14 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
 
           {/* Link Architecture */}
           <div style={{
-            background: 'rgba(255, 255, 255, 0.02)',
+            background: '#f8f9fa',
             border: '1px solid var(--border-subtle)',
             borderRadius: 'var(--radius-md)',
             padding: '16px 20px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Link2 size={16} color="#10b981" /> Link Architecture
+              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#202124', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Link2 size={16} color="#137333" /> Link Architecture
               </span>
               <span className={`badge ${seo.links?.brokenOrNoHref > 0 ? 'badge-warning' : 'badge-good'}`}>
                 {seo.links?.total || 0} Links

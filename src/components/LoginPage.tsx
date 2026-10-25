@@ -36,7 +36,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
 
   return (
     <div style={{
-      minHeight: '85vh',
+      minHeight: '80vh',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -46,30 +46,31 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
         maxWidth: '440px',
         width: '100%',
         padding: '40px 32px',
-        border: '1px solid var(--border-focus)',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(99, 102, 241, 0.15)',
+        background: '#ffffff',
+        border: '1px solid #dadce0',
+        boxShadow: '0 2px 6px 0 rgba(60, 64, 67, 0.15), 0 8px 16px 2px rgba(60, 64, 67, 0.08)',
         textAlign: 'center',
         position: 'relative',
       }}>
-        {/* Top Glow Logo */}
+        {/* Top Logo */}
         <div style={{
-          width: '56px',
-          height: '56px',
-          borderRadius: '16px',
-          background: 'linear-gradient(135deg, #6366f1, #10b981)',
+          width: '52px',
+          height: '52px',
+          borderRadius: '14px',
+          background: 'linear-gradient(135deg, #1a73e8, #137333)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 20px',
-          boxShadow: '0 6px 20px rgba(99, 102, 241, 0.4)',
+          margin: '0 auto 16px',
+          boxShadow: '0 4px 12px rgba(26, 115, 232, 0.25)',
         }}>
-          <Lock size={26} color="#ffffff" />
+          <Lock size={24} color="#ffffff" />
         </div>
 
-        <h2 style={{ fontSize: '1.65rem', fontWeight: 800, marginBottom: '6px', letterSpacing: '-0.02em' }}>
-          {lang === 'kn' ? 'ಖಾಸಗಿ ಲಾಗಿನ್' : 'Authorized Access'}
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#202124', marginBottom: '6px' }}>
+          {lang === 'kn' ? 'ಖಾಸಗಿ ಲಾಗಿನ್' : 'Authorized Sign In'}
         </h2>
-        <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '28px' }}>
+        <p style={{ fontSize: '0.88rem', color: '#5f6368', marginBottom: '24px' }}>
           {lang === 'kn'
             ? 'SEO & GEO ಆಡಿಟರ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪ್ರವೇಶಿಸಲು ಲಾಗಿನ್ ಆಗಿ'
             : 'Sign in to access the SEO & GEO Audit engine'}
@@ -77,9 +78,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
 
         {error && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.35)',
-            color: '#fca5a5',
+            background: '#fce8e6',
+            border: '1px solid #fad2cf',
+            color: '#c5221f',
             padding: '10px 14px',
             borderRadius: 'var(--radius-sm)',
             fontSize: '0.84rem',
@@ -90,22 +91,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px', textAlign: 'left' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
           {/* Username Field */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-dim)', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#3c4043', marginBottom: '6px' }}>
               {lang === 'kn' ? 'ಬಳಕೆದಾರ ಹೆಸರು (Username)' : 'Username'}
             </label>
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid var(--border-subtle)',
+              background: '#ffffff',
+              border: '1px solid #dadce0',
               borderRadius: 'var(--radius-md)',
-              padding: '12px 14px',
+              padding: '10px 14px',
               gap: '10px',
             }}>
-              <User size={18} color="var(--text-dim)" />
+              <User size={18} color="#5f6368" />
               <input
                 type="text"
                 value={username}
@@ -117,7 +118,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
                   background: 'transparent',
                   border: 'none',
                   outline: 'none',
-                  color: '#ffffff',
+                  color: '#202124',
                   fontSize: '0.95rem',
                   fontFamily: 'var(--font-sans)',
                 }}
@@ -127,19 +128,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
 
           {/* Password Field */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-dim)', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#3c4043', marginBottom: '6px' }}>
               {lang === 'kn' ? 'ಪಾಸ್‌ವರ್ಡ್ (Password)' : 'Password'}
             </label>
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid var(--border-subtle)',
+              background: '#ffffff',
+              border: '1px solid #dadce0',
               borderRadius: 'var(--radius-md)',
-              padding: '12px 14px',
+              padding: '10px 14px',
               gap: '10px',
             }}>
-              <Lock size={18} color="var(--text-dim)" />
+              <Lock size={18} color="#5f6368" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -151,7 +152,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
                   background: 'transparent',
                   border: 'none',
                   outline: 'none',
-                  color: '#ffffff',
+                  color: '#202124',
                   fontSize: '0.95rem',
                   fontFamily: 'var(--font-sans)',
                 }}
@@ -162,7 +163,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: 'var(--text-dim)',
+                  color: '#5f6368',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -178,21 +179,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang }) =>
             type="submit"
             disabled={isSubmitting}
             className="btn btn-primary"
-            style={{ width: '100%', marginTop: '10px', padding: '14px', fontSize: '1rem' }}
+            style={{ width: '100%', marginTop: '8px', padding: '12px', fontSize: '0.95rem' }}
           >
             {isSubmitting ? (
               <span>{lang === 'kn' ? 'ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ...' : 'Authenticating...'}</span>
             ) : (
               <>
-                <span>{lang === 'kn' ? 'ಲಾಗಿನ್ ಮಾಡಿ' : 'Secure Login'}</span>
+                <span>{lang === 'kn' ? 'ಲಾಗಿನ್ ಮಾಡಿ' : 'Sign in'}</span>
                 <ArrowRight size={18} />
               </>
             )}
           </button>
         </form>
 
-        <div style={{ marginTop: '24px', fontSize: '0.78rem', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-          <ShieldCheck size={14} color="#10b981" />
+        <div style={{ marginTop: '20px', fontSize: '0.78rem', color: '#5f6368', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+          <ShieldCheck size={14} color="#137333" />
           <span>{lang === 'kn' ? '256-bit ಎನ್‌ಕ್ರಿಪ್ಟೆಡ್ ರಕ್ಷಣೆ' : 'Protected by Cloudflare Edge Security'}</span>
         </div>
       </div>
