@@ -1,7 +1,8 @@
 import { analyzeSeo } from '../services/seoEngine';
 import { analyzeGeo } from '../services/geoEngine';
 import { analyzeSpeed } from '../services/speedEngine';
-import { FullAuditResult } from '../types/audit';
+import { analyzeInsiderMetrics } from '../services/insiderEngine';
+import type { FullAuditResult } from '../types/audit';
 
 export async function onRequest(context: any): Promise<Response> {
   const { request, env } = context;
@@ -102,21 +103,32 @@ export async function onRequest(context: any): Promise<Response> {
       // Robots.txt might not exist
     }
 
+    // Extract response headers
+    const headersMap: Record<string, string> = {};
+    pageResponse.headers.forEach((val: string, key: string) => {
+      headersMap[key] = val;
+    });
+
     // 3. Run Analysis Engines in Parallel
     const seoResult = analyzeSeo(html, targetUrl);
     const geoResult = analyzeGeo({ html, robotsTxt, targetUrl });
     const speedResult = await analyzeSpeed(targetUrl, startTime, html.length, env?.GOOGLE_PAGESPEED_API_KEY);
+    const insiderResult = analyzeInsiderMetrics({ html, targetUrl, responseHeaders: headersMap });
 
     // 4. Calculate Master Overall Score & Grade
-    const allIssues = [...seoResult.issues, ...geoResult.issues, ...speedResult.issues].sort(
-      (a, b) => b.impactScore - a.impactScore
-    );
+    const allIssues = [
+      ...seoResult.issues,
+      ...geoResult.issues,
+      ...speedResult.issues,
+      ...insiderResult.issues,
+    ].sort((a, b) => b.impactScore - a.impactScore);
 
-    // Weighted average: 40% SEO, 35% GEO, 25% Performance
+    // Weighted average: 30% SEO, 30% GEO, 20% Performance, 20% Insider
     const overallScore = Math.round(
-      seoResult.seo.score * 0.40 +
-      geoResult.geo.score * 0.35 +
-      speedResult.performance.score * 0.25
+      seoResult.seo.score * 0.30 +
+      geoResult.geo.score * 0.30 +
+      speedResult.performance.score * 0.20 +
+      insiderResult.insider.score * 0.20
     );
 
     let grade: 'A+' | 'A' | 'B' | 'C' | 'D' | 'F' = 'C';
@@ -136,6 +148,7 @@ export async function onRequest(context: any): Promise<Response> {
       seo: seoResult.seo,
       geo: geoResult.geo,
       performance: speedResult.performance,
+      insider: insiderResult.insider,
       issues: allIssues,
     };
 

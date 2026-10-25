@@ -1,6 +1,6 @@
 export interface AuditIssue {
   id: string;
-  category: 'seo' | 'geo' | 'performance' | 'security';
+  category: 'seo' | 'geo' | 'performance' | 'security' | 'insider';
   severity: 'critical' | 'warning' | 'good' | 'info';
   title: string;
   description: string;
@@ -100,6 +100,36 @@ export interface PerformanceMetrics {
   isHttps: boolean;
 }
 
+export interface InsiderMetrics {
+  score: number; // 0-100 (Secret & Deep Technical Metrics)
+  informationGain: {
+    wordCount: number;
+    readingTimeMin: number;
+    lexicalRichnessPercent: number; // Unique words ratio
+    status: 'good' | 'warning' | 'critical';
+    feedback: string;
+  };
+  domArchitecture: {
+    totalElements: number;
+    textToHtmlRatio: number; // percentage
+    crawlBudgetEfficiency: 'Optimal' | 'Heavy' | 'Bloated';
+    feedback: string;
+  };
+  securityHeaders: {
+    hsts: boolean;
+    csp: boolean;
+    xFrameOptions: boolean;
+    xContentTypeOptions: boolean;
+    score: number;
+    feedback: string;
+  };
+  aiHallucinationRisk: {
+    riskLevel: 'Low' | 'Moderate' | 'High';
+    factDensityScore: number; // 0-100
+    feedback: string;
+  };
+}
+
 export interface FullAuditResult {
   url: string;
   domain: string;
@@ -109,5 +139,6 @@ export interface FullAuditResult {
   seo: SeoMetrics;
   geo: GeoMetrics;
   performance: PerformanceMetrics;
+  insider: InsiderMetrics;
   issues: AuditIssue[];
 }

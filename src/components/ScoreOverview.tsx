@@ -170,6 +170,34 @@ export const ScoreOverview: React.FC<ScoreOverviewProps> = ({ audit, lang }) => 
             TTFB: {audit.performance.serverResponseTimeMs}ms
           </div>
         </div>
+
+        {/* Insider Secrets Score */}
+        {audit.insider && (
+          <div style={{
+            textAlign: 'center',
+            padding: '24px',
+            background: 'rgba(236, 72, 153, 0.05)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid rgba(236, 72, 153, 0.25)',
+          }}>
+            <div style={{ fontSize: '0.85rem', color: '#ec4899', marginBottom: '10px', fontWeight: 600 }}>
+              Insider Pro Secrets
+            </div>
+            <div style={{
+              fontSize: '2.8rem',
+              fontWeight: 800,
+              lineHeight: 1,
+              color: getScoreColor(audit.insider.score),
+              marginBottom: '8px',
+            }}>
+              {audit.insider.score}
+              <span style={{ fontSize: '1.2rem', color: 'var(--text-dim)' }}>%</span>
+            </div>
+            <span className={`badge ${audit.insider.score >= 80 ? 'badge-good' : 'badge-warning'}`}>
+              {audit.insider.informationGain.wordCount} words • {audit.insider.aiHallucinationRisk.riskLevel} Risk
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Issues Breakdown Strip */}

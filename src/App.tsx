@@ -6,6 +6,7 @@ import { ScoreOverview } from './components/ScoreOverview';
 import { GeoAuditCard } from './components/GeoAuditCard';
 import { SeoAuditCard } from './components/SeoAuditCard';
 import { SpeedAuditCard } from './components/SpeedAuditCard';
+import { InsiderAuditCard } from './components/InsiderAuditCard';
 import { IssuesList } from './components/IssuesList';
 import { CodeModal } from './components/CodeModal';
 import { Footer } from './components/Footer';
@@ -130,6 +131,15 @@ export function App() {
                   performance={auditResult.performance}
                   lang={lang}
                 />
+
+                {/* Advanced Insider & Secret Metrics Card */}
+                {auditResult.insider && (
+                  <InsiderAuditCard
+                    insider={auditResult.insider}
+                    lang={lang}
+                    onOpenFix={handleOpenFixById}
+                  />
+                )}
 
                 {/* Master Actionable Issues List */}
                 <IssuesList

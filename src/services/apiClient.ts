@@ -2,6 +2,7 @@ import type { FullAuditResult } from '../types/audit';
 import { analyzeSeo } from '../../functions/services/seoEngine';
 import { analyzeGeo } from '../../functions/services/geoEngine';
 import { analyzeSpeed } from '../../functions/services/speedEngine';
+import { analyzeInsiderMetrics } from '../../functions/services/insiderEngine';
 
 export async function runWebsiteAudit(targetUrl: string): Promise<FullAuditResult> {
   let normalizedUrl = targetUrl.trim();
@@ -67,15 +68,20 @@ export async function runWebsiteAudit(targetUrl: string): Promise<FullAuditResul
   const seoResult = analyzeSeo(html, normalizedUrl);
   const geoResult = analyzeGeo({ html, robotsTxt, targetUrl: normalizedUrl });
   const speedResult = await analyzeSpeed(normalizedUrl, startTime, html.length);
+  const insiderResult = analyzeInsiderMetrics({ html, targetUrl: normalizedUrl });
 
-  const allIssues = [...seoResult.issues, ...geoResult.issues, ...speedResult.issues].sort(
-    (a, b) => b.impactScore - a.impactScore
-  );
+  const allIssues = [
+    ...seoResult.issues,
+    ...geoResult.issues,
+    ...speedResult.issues,
+    ...insiderResult.issues,
+  ].sort((a, b) => b.impactScore - a.impactScore);
 
   const overallScore = Math.round(
-    seoResult.seo.score * 0.40 +
-    geoResult.geo.score * 0.35 +
-    speedResult.performance.score * 0.25
+    seoResult.seo.score * 0.30 +
+    geoResult.geo.score * 0.30 +
+    speedResult.performance.score * 0.20 +
+    insiderResult.insider.score * 0.20
   );
 
   let grade: 'A+' | 'A' | 'B' | 'C' | 'D' | 'F' = 'B';
@@ -95,6 +101,7 @@ export async function runWebsiteAudit(targetUrl: string): Promise<FullAuditResul
     seo: seoResult.seo,
     geo: geoResult.geo,
     performance: speedResult.performance,
+    insider: insiderResult.insider,
     issues: allIssues,
   };
 }
