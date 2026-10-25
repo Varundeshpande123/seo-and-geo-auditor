@@ -2,15 +2,13 @@ import React from 'react';
 import { Globe, Sparkles, LogOut, UserCheck } from 'lucide-react';
 
 interface NavbarProps {
-  lang: 'kn' | 'en';
-  setLang: (lang: 'kn' | 'en') => void;
+  lang?: 'kn' | 'en';
+  setLang?: (lang: 'kn' | 'en') => void;
   isAuthenticated?: boolean;
   onLogout?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  lang,
-  setLang,
   isAuthenticated = false,
   onLogout,
 }) => {
@@ -75,58 +73,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
-          {/* Language Switcher */}
-          <div style={{
-            display: 'flex',
-            background: '#f1f3f4',
-            borderRadius: 'var(--radius-md)',
-            padding: '3px',
-            border: '1px solid #dadce0',
-          }}>
-            <button
-              onClick={() => setLang('kn')}
-              style={{
-                border: 'none',
-                background: lang === 'kn' ? '#1a73e8' : 'transparent',
-                color: lang === 'kn' ? '#ffffff' : '#5f6368',
-                padding: '4px 12px',
-                borderRadius: '8px',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-            >
-              ಕನ್ನಡ
-            </button>
-            <button
-              onClick={() => setLang('en')}
-              style={{
-                border: 'none',
-                background: lang === 'en' ? '#1a73e8' : 'transparent',
-                color: lang === 'en' ? '#ffffff' : '#5f6368',
-                padding: '4px 12px',
-                borderRadius: '8px',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-            >
-              English
-            </button>
-          </div>
 
           {/* Logout Button */}
           {isAuthenticated && onLogout && (
             <button
               onClick={onLogout}
               className="btn btn-secondary"
-              title={lang === 'kn' ? 'ಲಾಗ್‌ಔಟ್' : 'Logout'}
+              title="Logout"
               style={{ padding: '6px 12px', fontSize: '0.82rem', gap: '6px' }}
             >
               <LogOut size={14} />
-              <span>{lang === 'kn' ? 'ಲಾಗ್‌ಔಟ್' : 'Logout'}</span>
+              <span>Logout</span>
             </button>
           )}
         </div>

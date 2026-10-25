@@ -5,7 +5,6 @@ import { HeroSearch } from './components/HeroSearch';
 import { ScoreOverview } from './components/ScoreOverview';
 import { CompetitorBattleCard } from './components/CompetitorBattleCard';
 import { GeoAuditCard } from './components/GeoAuditCard';
-import { AiDiscoveryCard } from './components/AiDiscoveryCard';
 import { SeoAuditCard } from './components/SeoAuditCard';
 import { SpeedAuditCard } from './components/SpeedAuditCard';
 import { InsiderAuditCard } from './components/InsiderAuditCard';
@@ -17,7 +16,7 @@ import { runWebsiteAudit } from './services/apiClient';
 import type { FullAuditResult, AuditIssue } from './types/audit';
 
 export function App() {
-  const [lang, setLang] = useState<'kn' | 'en'>('kn');
+  const [lang, setLang] = useState<'kn' | 'en'>('en');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [auditResult, setAuditResult] = useState<FullAuditResult | null>(null);
   const [competitorResult, setCompetitorResult] = useState<FullAuditResult | null>(null);
@@ -396,11 +395,6 @@ export function App() {
                       geo={auditResult.geo}
                       lang={lang}
                       onOpenFix={handleOpenFixById}
-                    />
-
-                    <AiDiscoveryCard
-                      geo={auditResult.geo}
-                      lang={lang}
                     />
 
                     <IssuesList
