@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# SEO & GEO Auditor (Edge 2.0)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> Next-Generation Web Audit Platform for Google SEO and Generative AI Search Engines (ChatGPT, Perplexity, Gemini, Claude).
 
-Currently, two official plugins are available:
+[![Build and Verify CI](https://github.com/Varundeshpande123/seo-and-geo-auditor/actions/workflows/deploy.yml/badge.svg)](https://github.com/Varundeshpande123/seo-and-geo-auditor/actions/workflows/deploy.yml)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌟 Overview
+Built for **somashekhar.in** and deployable on **Cloudflare Pages & Workers**.
 
-## React Compiler
+Unlike legacy SEO checkers that only test standard HTML meta tags, this tool introduces **GEO (Generative Engine Optimization)**:
+1. **AI Crawler Readiness:** Checks `robots.txt` access for `GPTBot`, `PerplexityBot`, `ClaudeBot`, `Google-Extended`, `Bytespider`.
+2. **Knowledge Graph Entities:** Validates Schema.org JSON-LD structured data.
+3. **Citation Extractability:** Analyzes conversational Q&A heading formats and direct summary blocks.
+4. **Google SEO & Core Web Vitals:** On-page structure, canonicals, image alt tags, TTFB, and speed.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the Oxlint configuration
+## 🚀 Live Subdomain Setup on Cloudflare
+1. Open [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. Go to **Workers & Pages** -> **Create application** -> **Pages** -> **Connect to Git**
+3. Select repo: `Varundeshpande123/seo-and-geo-auditor`
+4. Build Settings:
+   - **Framework:** `Vite`
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+5. Click **Save and Deploy**.
+6. Under **Custom domains**, click **Set up a custom domain** and enter:
+   `seo.somashekhar.in`
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+---
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## 🛠️ Local Development
+```bash
+npm install
+npm run dev
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Open [http://localhost:5173](http://localhost:5173).
