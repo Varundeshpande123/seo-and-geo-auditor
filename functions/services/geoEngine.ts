@@ -66,6 +66,7 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: Ge
   const schemasFound: string[] = [];
   let hasOrganizationOrPerson = false;
   let hasKnowledgeGraphEntities = false;
+  let hasIncompleteSchema = false;
 
   for (const match of jsonLdMatches) {
     try {
@@ -83,6 +84,8 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: Ge
             }
             if (obj['sameAs'] || obj['@id'] || obj['knowsAbout']) {
               hasKnowledgeGraphEntities = true;
+            } else {
+              hasIncompleteSchema = true;
             }
           }
           if (obj['@graph'] && Array.isArray(obj['@graph'])) {
@@ -104,7 +107,6 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: Ge
     structuredScore = 20;
     schemaStatus = 'critical';
     schemaFeedback = 'No JSON-LD Schema markup found! AI models struggle to extract clear entity relationships without Schema.';
-    geoScore -= 30;
 
     const hostname = targetUrl.replace(/^https?:\/\//i, '').split('/')[0];
     issues.push({
@@ -117,85 +119,234 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: Ge
       codeSnippet: `<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "Organization",\n  "name": "${hostname}",\n  "url": "${targetUrl}",\n  "sameAs": [\n    "https://twitter.com/yourhandle",\n    "https://linkedin.com/company/yourhandle"\n  ]\n}\n<\/script>`,
       impactScore: 10
     });
-  } else if (!hasOrganizationOrPerson) {
-    structuredScore = 60;
+  } else if (!hasOrganizationOrPerson || hasIncompleteSchema) {
+    structuredScore = 80;
     schemaStatus = 'warning';
-    schemaFeedback = `Found schemas: ${schemasFound.join(', ')}, but missing Organization/Person entity schema.`;
-    geoScore -= 10;
+    schemaFeedback = `Found schemas: ${schemasFound.slice(0, 5).join(', ')}, but entity properties could be more complete.`;
 
     issues.push({
-      id: 'missing-entity-schema',
+      id: 'schema-incomplete-or-disagrees',
       category: 'geo',
       severity: 'warning',
-      title: 'Missing Organization or Author Entity Schema',
-      description: 'AI engines prioritize sources with clear authorship and organization entities for E-E-A-T (Experience, Expertise, Authoritativeness, and Trustworthiness).',
-      recommendation: 'Add an Organization or Person schema containing "sameAs" links to verified social and Wikipedia profiles.',
-      impactScore: 7
+      title: 'Schema is incomplete or disagrees with the page',
+      description: 'Structured data is present, but lacks complete contextual properties such as "sameAs" links to verified social profiles, explicit contact points, or entity relationships.',
+      recommendation: 'Ensure your Organization schema contains complete sameAs profiles and verified business details.',
+      impactScore: 5
     });
   }
 
-  // 3. Citation Readiness (LLM-friendly content structure)
-  // Check for Q&A / FAQ heading structures
-  const qaHeadingMatch = html.match(/<h[23][^>]*>\s*(?:what|how|why|when|where|who|is|can|do|does|which)[^<]*\?*<\/h[23]>/gi);
-  const faqOrQaFormatFound = Boolean(qaHeadingMatch && qaHeadingMatch.length >= 2);
+  // 3. Extractability & Client-Side JavaScript Dependency Check (GeoTest High Impact Issue)
+  const cleanHtml = html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+    .replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, '');
+  const rawText = cleanHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const wordCount = rawText.split(/\s+/).filter(Boolean).length;
 
-  // Check for direct summary / answer blocks (e.g. class or id containing summary, tldr, or lead paragraph)
-  const directAnswerBlocksFound = /class=["'][^"']*(?:tldr|summary|quick-answer|key-takeaways|direct-answer|lead)[^"']*["']/i.test(html) ||
-                                  /<p\b[^>]*>(?:In summary|To summarize|Key Takeaway|Quick answer|The short answer is):?/i.test(html);
+  const hasEmptySpaRoot = /<div\s+id=["'](?:root|__next|app)["']\s*>\s*<\/div>/i.test(html);
+  const isJsDependent = Boolean(hasEmptySpaRoot || (html.length > 8000 && wordCount < 300));
 
-  // Check for tables and lists (AI citation love tables for fact comparison)
-  const tabularDataFound = /<table\b/i.test(html);
-  const listMatches = html.match(/<[uo]l\b/gi) || [];
-  const listsCount = listMatches.length;
-
-  let citationScore = 50;
-  if (faqOrQaFormatFound) citationScore += 20;
-  if (directAnswerBlocksFound) citationScore += 15;
-  if (tabularDataFound) citationScore += 15;
-  if (listsCount >= 3) citationScore += 10;
-  citationScore = Math.min(100, citationScore);
-
-  if (!faqOrQaFormatFound) {
+  let extractabilityScore = 100;
+  if (isJsDependent) {
+    extractabilityScore = 55;
     issues.push({
-      id: 'missing-qa-headings',
+      id: 'content-depends-on-javascript',
       category: 'geo',
-      severity: 'info',
-      title: 'Add Conversational Q&A Format Headings',
-      description: 'Users query AI engines with conversational questions (e.g., "How does...", "What is the best..."). Structuring H2/H3 headers as direct questions helps AI select your page as a direct citation.',
-      recommendation: 'Format at least 2 subheadings as direct questions followed by concise, factual 2-3 sentence answers.',
+      severity: 'critical', // HIGH priority in GeoTest (+3.1 to +6.0 pts)
+      title: 'Content depends on JavaScript to appear',
+      description: 'AI Search crawlers (GPTBot, ClaudeBot, PerplexityBot) typically do not execute client-side JavaScript. If your content is rendered dynamically via React/Vue without SSR, AI models may see an empty or incomplete page.',
+      recommendation: 'Implement Server-Side Rendering (SSR), Static Site Generation (SSG), or Pre-rendering (e.g., Next.js, Astro, or Cloudflare edge HTML caching) so raw HTML contains the full text.',
+      impactScore: 9
+    });
+  }
+
+  // 4. Answer Structure & Inverted Pyramid (GeoTest High Impact Issue)
+  // Check if sections open with direct answers
+  const headingSections = Array.from(html.matchAll(/<h[23][^>]*>([\s\S]*?)<\/h[23]>[\s\r\n]*([\s\S]*?)(?:<h[23]|$)/gi));
+  let sectionsOpeningWithAnswerCount = 0;
+  for (const sec of headingSections) {
+    const secBody = (sec[2] || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    // Check if body starts with direct informative statement vs introductory filler
+    if (/^(?:[A-Z][a-zA-Z0-9\s,-]+ (?:is|are|provides|features|offers|was|were|helps|allows|enables|delivers|costs|measures|includes)|\d+)/i.test(secBody) &&
+        !/^(?:Welcome|In today|In a world|As we know|We are proud|Our story|Click here|Read on)/i.test(secBody)) {
+      sectionsOpeningWithAnswerCount++;
+    }
+  }
+
+  const sectionsDoNotOpenWithAnswer = headingSections.length >= 2 && (sectionsOpeningWithAnswerCount < Math.max(1, Math.floor(headingSections.length * 0.4)));
+
+  if (sectionsDoNotOpenWithAnswer) {
+    issues.push({
+      id: 'sections-do-not-open-with-answer',
+      category: 'geo',
+      severity: 'critical', // HIGH priority in GeoTest (+6.2 to score)
+      title: 'Sections do not open with the answer',
+      description: 'Generative AI search engines extract 40-60 word direct quotations from the immediate start of sections. Sections that begin with marketing filler, narrative build-up, or greetings fail AI direct citation selection.',
+      recommendation: 'Adopt the Inverted Pyramid journalism style: Place the definitive answer, core statistic, or primary definition in the very first sentence under each H2/H3.',
+      codeSnippet: `<h2>What is our core capability?</h2>\n<p>Our platform is an enterprise-grade AI audit solution that delivers sub-second automated compliance across 5 major AI models.</p>`,
+      impactScore: 9
+    });
+  }
+
+  // 5. Citation Worthiness & Fact Density (GeoTest Medium Impact Issue)
+  // Count concrete facts: numbers, percentages, dates, currency, data specs
+  const factMatches = rawText.match(/\b(?:\d+(?:\.\d+)?%?|\$\d+(?:\.\d+)?|€\d+|£\d+|₹\d+|(?:19|20)\d{2}|\d+\s*(?:gb|mb|px|kg|users|clients|years|days|hours|ms|sec|reviews|stars))\b/gi) || [];
+  const factCount = factMatches.length;
+  const factDensityRatio = wordCount > 0 ? (factCount / (wordCount / 100)) : 0;
+  const isLowFactDensity = wordCount >= 100 && factDensityRatio < 1.8;
+
+  if (isLowFactDensity) {
+    issues.push({
+      id: 'low-fact-density',
+      category: 'geo',
+      severity: 'warning', // MEDIUM in GeoTest (+1.6 to score)
+      title: 'Low fact density',
+      description: 'Your page contains mostly generic descriptive phrasing. Generative AI models prioritize content with verifiable facts, statistics, benchmarks, dates, and quantitative evidence.',
+      recommendation: 'Incorporate concrete figures, benchmark metrics, exact timelines, and verifiable statistics throughout your body paragraphs.',
       impactScore: 6
     });
   }
 
-  if (!directAnswerBlocksFound) {
+  // 6. Authority and Trust (GeoTest Medium Impact Issues)
+  // Check for Privacy Policy & Terms of Service links
+  const hasPrivacyLink = /<a\b[^>]*href=["'][^"']*(?:privacy|privacy-policy)[^"']*["']/i.test(html) || /privacy\s+policy/i.test(html);
+  const hasTermsLink = /<a\b[^>]*href=["'][^"']*(?:terms|terms-of-service|terms-and-conditions|tos)[^"']*["']/i.test(html) || /terms\s+of\s+service|terms\s*&\s*conditions/i.test(html);
+  const hasPrivacyAndTerms = hasPrivacyLink && hasTermsLink;
+
+  if (!hasPrivacyAndTerms) {
     issues.push({
-      id: 'missing-tldr-direct-answer',
+      id: 'privacy-and-terms-missing',
       category: 'geo',
-      severity: 'info',
-      title: 'Add a "Key Takeaways" or "TL;DR" Block',
-      description: 'Generative AI search synthesizers extract 40-60 word concise summary snippets. Placing a clear summary block near the top drastically increases citation frequency.',
-      recommendation: 'Add a summary block right below your hero or introduction paragraph.',
-      codeSnippet: `<div class="key-takeaways">\n  <h3>Key Takeaways</h3>\n  <ul>\n    <li>Concise fact 1</li>\n    <li>Concise fact 2</li>\n  </ul>\n</div>`,
-      impactScore: 7
+      severity: 'warning', // MEDIUM in GeoTest (+3.1 to score)
+      title: 'Privacy and Terms links not found',
+      description: 'Generative search engines (especially Google Gemini and Perplexity) verify organizational credibility and E-E-A-T trustworthiness by confirming the presence of accessible Privacy Policy and Terms of Service links.',
+      recommendation: 'Ensure your footer contains clear, direct links to your Privacy Policy and Terms of Service pages.',
+      impactScore: 6
     });
   }
 
-  // Final GEO overall score calculation
-  const calculatedGeoScore = Math.round((botScore * 0.35) + (structuredScore * 0.40) + (citationScore * 0.25));
+  // Check for contextual internal links inside <p> paragraphs
+  let targetHostname = '';
+  try {
+    targetHostname = new URL(targetUrl).hostname.replace(/^www\./, '');
+  } catch {}
 
-  let aiRecommendation = 'Your website is well primed for AI Search engines. Continue building external entity mentions.';
-  if (calculatedGeoScore < 60) {
-    aiRecommendation = 'Critical: Your website is at risk of being invisible to ChatGPT and Perplexity. Implement Schema JSON-LD and allow AI bots in robots.txt immediately.';
-  } else if (calculatedGeoScore < 80) {
-    aiRecommendation = 'Moderate: Your site can be cited, but needs clearer entity schemas and question-answer formatting to win top generative citations.';
+  const paragraphs = html.match(/<p\b[^>]*>([\s\S]*?)<\/p>/gi) || [];
+  let contextualInternalLinksCount = 0;
+  const escapedHostname = targetHostname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const internalLinkRegex = new RegExp(`<a\\b[^>]*href=["'](?:(?![a-z]+:)[^"']+|https?:\\/\\/(?:www\\.)?${escapedHostname}[^"']*)["']`, 'gi');
+  for (const p of paragraphs) {
+    const internalLinks = p.match(internalLinkRegex) || [];
+    contextualInternalLinksCount += internalLinks.length;
   }
 
-  // Calculate AI Share of Voice (SOV)
-  const sovPercentage = Math.round((botScore * 0.40) + (structuredScore * 0.35) + (citationScore * 0.25));
+  const isFewContextualInternalLinks = contextualInternalLinksCount < 2;
+  if (isFewContextualInternalLinks) {
+    issues.push({
+      id: 'few-contextual-internal-links',
+      category: 'geo',
+      severity: 'warning', // MEDIUM in GeoTest (+4.7 to score)
+      title: 'Few contextual internal links',
+      description: 'Your body paragraphs have very few inline links to related topics. AI engines map internal semantic graphs to determine topic depth, citation authority, and navigational hierarchy.',
+      recommendation: 'Add 2-4 contextual in-text links within body paragraphs connecting to your key service, case study, or documentation pages.',
+      impactScore: 6
+    });
+  }
+
+  // 7. Citation Readiness & Format Check
+  const qaHeadingMatch = html.match(/<h[23][^>]*>\s*(?:what|how|why|when|where|who|is|can|do|does|which)[^<]*\?*<\/h[23]>/gi);
+  const faqOrQaFormatFound = Boolean(qaHeadingMatch && qaHeadingMatch.length >= 2);
+
+  const directAnswerBlocksFound = /class=["'][^"']*(?:tldr|summary|quick-answer|key-takeaways|direct-answer|lead)[^"']*["']/i.test(html) ||
+                                  /<p\b[^>]*>(?:In summary|To summarize|Key Takeaway|Quick answer|The short answer is):?/i.test(html);
+
+  const tabularDataFound = /<table\b/i.test(html);
+  const listMatches = html.match(/<[uo]l\b/gi) || [];
+  const listsCount = listMatches.length;
+
+  let citationScore = 60;
+  if (faqOrQaFormatFound) citationScore += 15;
+  if (directAnswerBlocksFound) citationScore += 15;
+  if (tabularDataFound) citationScore += 10;
+  if (listsCount >= 3) citationScore += 10;
+  if (isLowFactDensity) citationScore -= 15;
+  citationScore = Math.max(20, Math.min(100, citationScore));
+
+  // Heading hierarchy check
+  const h1Matches = html.match(/<h1\b/gi) || [];
+  const isWeakHeadingHierarchy = h1Matches.length !== 1 || headingSections.length < 2;
+  if (isWeakHeadingHierarchy) {
+    issues.push({
+      id: 'heading-hierarchy-is-weak',
+      category: 'geo',
+      severity: 'warning', // MEDIUM in GeoTest (+1.6 to score)
+      title: 'Heading hierarchy is weak',
+      description: 'Heading levels are unstructured or lack clear question-answer progression. AI models rely on orderly H1 -> H2 -> H3 outlines to parse document semantics.',
+      recommendation: 'Ensure a single H1 introduces the main topic, with logical H2 subheadings grouping key concepts.',
+      impactScore: 5
+    });
+  }
+
+  // Final GeoTest-Calibrated Strict Score Calculation
+  // Breakdown matching GeoTest's published rubric (out of 100):
+  // 1. Answer Structure: 20 pts max
+  let answerStructurePts = 20;
+  if (sectionsDoNotOpenWithAnswer) answerStructurePts -= 6.2;
+  if (isWeakHeadingHierarchy) answerStructurePts -= 1.6;
+
+  // 2. Extractability: 18 pts max
+  let extractabilityPts = 18;
+  if (isJsDependent) extractabilityPts -= 6.5;
+
+  // 3. Authority & Trust: 18 pts max
+  let authorityTrustPts = 18;
+  if (!hasPrivacyAndTerms) authorityTrustPts -= 3.1;
+  if (isFewContextualInternalLinks) authorityTrustPts -= 4.7;
+
+  // 4. Citation Worthiness: 16 pts max
+  let citationWorthinessPts = 16;
+  if (isLowFactDensity) citationWorthinessPts -= 3.5;
+  if (!directAnswerBlocksFound) citationWorthinessPts -= 3.0;
+
+  // 5. Structured Data: 14 pts max
+  let structuredDataPts = 14;
+  if (schemasFound.length === 0) structuredDataPts -= 8.0;
+  else if (hasIncompleteSchema) structuredDataPts -= 2.0;
+
+  // 6. AI Bot Access (Robots.txt): 14 pts max
+  let botAccessPts = (botScore / 100) * 14;
+
+  const rawCalculatedScore = Math.round(
+    answerStructurePts +
+    extractabilityPts +
+    authorityTrustPts +
+    citationWorthinessPts +
+    structuredDataPts +
+    botAccessPts
+  );
+
+  const calculatedGeoScore = Math.max(15, Math.min(100, rawCalculatedScore));
+
+  let geoGrade: 'A' | 'B' | 'C' | 'D' | 'F' = 'C';
+  if (calculatedGeoScore >= 85) geoGrade = 'A';
+  else if (calculatedGeoScore >= 75) geoGrade = 'B';
+  else if (calculatedGeoScore >= 60) geoGrade = 'C';
+  else if (calculatedGeoScore >= 45) geoGrade = 'D';
+  else geoGrade = 'F';
+
+  let aiRecommendation = 'Your website is well primed for AI Search engines. Continue building external entity mentions.';
+  if (calculatedGeoScore < 65) {
+    aiRecommendation = 'Fair (Grade C): Content relies on JavaScript, sections lack direct answers, or trust links are missing. Fix high-priority items to reach 85+ Ready.';
+  } else if (calculatedGeoScore < 80) {
+    aiRecommendation = 'Moderate (Grade B): Good baseline, but needs inverted pyramid answers and contextual links to compete for top generative AI citations.';
+  }
+
+  // Calculate AI Share of Voice (SOV) aligned with calibrated score
+  const sovPercentage = Math.round(calculatedGeoScore * 0.9);
   let sovRating: 'Dominant' | 'Competitive' | 'Moderate' | 'Low' = 'Moderate';
   if (sovPercentage >= 80) sovRating = 'Dominant';
   else if (sovPercentage >= 65) sovRating = 'Competitive';
-  else if (sovPercentage < 45) sovRating = 'Low';
+  else if (sovPercentage < 50) sovRating = 'Low';
 
   const sovSummary = sovRating === 'Dominant'
     ? 'High brand visibility across generative search engines with strong citation probability.'
@@ -279,6 +430,25 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: Ge
   return {
     geo: {
       score: calculatedGeoScore,
+      grade: geoGrade,
+      extractability: {
+        score: extractabilityScore,
+        jsDependent: isJsDependent,
+        rawTextLength: rawText.length,
+        feedback: isJsDependent
+          ? 'Content relies heavily on client-side JavaScript to render.'
+          : 'Content is directly accessible in static raw HTML.',
+        status: isJsDependent ? 'critical' : 'good',
+      },
+      authorityTrust: {
+        score: Math.round(((hasPrivacyAndTerms ? 50 : 15) + (!isFewContextualInternalLinks ? 50 : 20))),
+        hasPrivacyAndTerms,
+        contextualInternalLinks: contextualInternalLinksCount,
+        feedback: hasPrivacyAndTerms
+          ? `Found verified trust links and ${contextualInternalLinksCount} contextual links.`
+          : 'Missing Privacy Policy / Terms of Service or in-text contextual links.',
+        status: hasPrivacyAndTerms && !isFewContextualInternalLinks ? 'good' : 'warning',
+      },
       aiBotAccess: {
         score: botScore,
         bots: botResults,

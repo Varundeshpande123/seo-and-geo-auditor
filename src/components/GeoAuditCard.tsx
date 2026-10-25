@@ -35,9 +35,16 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
             </p>
           </div>
         </div>
-        <span className={`badge ${geo.score >= 80 ? 'badge-good' : 'badge-warning'}`} style={{ fontSize: '0.85rem' }}>
-          {geo.score}% Ready
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {geo.grade && (
+            <span className="badge badge-primary" style={{ fontSize: '0.82rem' }}>
+              Grade {geo.grade}
+            </span>
+          )}
+          <span className={`badge ${geo.score >= 80 ? 'badge-good' : geo.score >= 60 ? 'badge-warning' : 'badge-critical'}`} style={{ fontSize: '0.85rem' }}>
+            {geo.score}% Ready
+          </span>
+        </div>
       </div>
 
       {/* AI Recommendation Banner */}
@@ -213,7 +220,79 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
           </div>
         </div>
 
-        {/* 4. Modern llms.txt AI Protocol */}
+        {/* 4. Extractability & JavaScript Dependency (GeoTest Rubric) */}
+        <div style={{
+          background: '#f8f9fa',
+          border: '1px solid #dadce0',
+          borderRadius: 'var(--radius-md)',
+          padding: '20px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <Sparkles size={16} color="#1a73e8" />
+              <span>Extractability & JS Dependency</span>
+            </div>
+            <span className={`badge ${geo.extractability?.jsDependent ? 'badge-critical' : 'badge-good'}`}>
+              {geo.extractability?.jsDependent ? 'JS Dependent' : 'Static HTML OK'}
+            </span>
+          </div>
+
+          <p style={{ fontSize: '0.82rem', color: '#5f6368', marginBottom: '12px' }}>
+            {geo.extractability?.feedback || 'Raw HTML is readable by AI models without client-side hydration.'}
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>
+              <span>AI Crawl Efficiency:</span>
+              <span style={{ color: geo.extractability?.jsDependent ? '#c5221f' : '#137333', fontWeight: 600 }}>
+                {geo.extractability?.jsDependent ? 'High Friction (SPA)' : 'Zero Friction (SSR/SSG)'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>
+              <span>Static Text Length:</span>
+              <span style={{ color: '#202124', fontWeight: 600 }}>{geo.extractability?.rawTextLength || 0} chars</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 5. Authority & Trust (E-E-A-T & Privacy/Terms) */}
+        <div style={{
+          background: '#f8f9fa',
+          border: '1px solid #dadce0',
+          borderRadius: 'var(--radius-md)',
+          padding: '20px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <Layers size={16} color="#137333" />
+              <span>Authority & Trust (E-E-A-T)</span>
+            </div>
+            <span className={`badge ${geo.authorityTrust?.hasPrivacyAndTerms ? 'badge-good' : 'badge-warning'}`}>
+              {geo.authorityTrust?.hasPrivacyAndTerms ? 'Verified Trust' : 'Missing Legal'}
+            </span>
+          </div>
+
+          <p style={{ fontSize: '0.82rem', color: '#5f6368', marginBottom: '12px' }}>
+            {geo.authorityTrust?.feedback || 'Privacy Policy, Terms of Service, and contextual in-text links.'}
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>
+              <span>Privacy & Terms Links:</span>
+              <span style={{ color: geo.authorityTrust?.hasPrivacyAndTerms ? '#137333' : '#c5221f', fontWeight: 600 }}>
+                {geo.authorityTrust?.hasPrivacyAndTerms ? 'Present' : 'Not found in footer'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>
+              <span>Contextual Inline Links:</span>
+              <span style={{ color: '#1a73e8', fontWeight: 600 }}>
+                {geo.authorityTrust?.contextualInternalLinks || 0} internal links in text
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 6. Modern llms.txt AI Protocol */}
         <div style={{
           background: '#f8f9fa',
           border: '1px solid #dadce0',

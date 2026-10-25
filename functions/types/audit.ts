@@ -76,7 +76,15 @@ export interface SeoMetrics {
 }
 
 export interface GeoMetrics {
-  score: number; // 0-100 (Generative Engine Optimization Score)
+  score: number; // 0-100 (GeoTest Calibrated Strict Score)
+  grade?: 'A' | 'B' | 'C' | 'D' | 'F'; // Grade e.g. C Fair (65)
+  categoryBreakdown?: {
+    citationWorthiness: { score: number; maxScore: number; factDensity: number; status: 'good' | 'warning' | 'critical' };
+    answerStructure: { score: number; maxScore: number; opensWithAnswer: boolean; status: 'good' | 'warning' | 'critical' };
+    authorityTrust: { score: number; maxScore: number; hasPrivacyAndTerms: boolean; contextualLinksCount: number; status: 'good' | 'warning' | 'critical' };
+    structuredData: { score: number; maxScore: number; status: 'good' | 'warning' | 'critical' };
+    extractability: { score: number; maxScore: number; jsDependent: boolean; status: 'good' | 'warning' | 'critical' };
+  };
   aiBotAccess: {
     score: number;
     bots: {
@@ -102,6 +110,20 @@ export interface GeoMetrics {
     tabularDataFound: boolean;
     listsCount: number;
     feedback: string;
+  };
+  extractability?: {
+    score: number;
+    jsDependent: boolean;
+    rawTextLength: number;
+    feedback: string;
+    status: 'good' | 'warning' | 'critical';
+  };
+  authorityTrust?: {
+    score: number;
+    hasPrivacyAndTerms: boolean;
+    contextualInternalLinks: number;
+    feedback: string;
+    status: 'good' | 'warning' | 'critical';
   };
   aiRecommendation: string;
   shareOfVoice: {
