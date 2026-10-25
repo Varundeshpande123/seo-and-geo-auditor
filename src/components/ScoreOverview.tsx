@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { FullAuditResult } from '../types/audit';
-import { AlertTriangle, CheckCircle2, XCircle, Printer } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, XCircle, Printer, Check, Sparkles } from 'lucide-react';
 
 interface ScoreOverviewProps {
   audit: FullAuditResult;
@@ -11,6 +11,8 @@ export const ScoreOverview: React.FC<ScoreOverviewProps> = ({ audit, lang }) => 
   const criticalCount = audit.issues.filter((i) => i.severity === 'critical').length;
   const warningCount = audit.issues.filter((i) => i.severity === 'warning').length;
 
+  const [copiedPrompt, setCopiedPrompt] = useState(false);
+
   const getScoreColor = (score: number) => {
     if (score >= 85) return '#0f9d58'; // Google Green
     if (score >= 60) return '#b06000'; // Google Orange/Amber
@@ -19,6 +21,33 @@ export const ScoreOverview: React.FC<ScoreOverviewProps> = ({ audit, lang }) => 
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleCopyAiPrompt = () => {
+    const issuesList = audit.issues
+      .map((issue, idx) => `${idx + 1}. [${issue.severity.toUpperCase()}] ${issue.title} (Category: ${issue.category})\n   - Problem: ${issue.description}\n   - Solution: ${issue.recommendation}${issue.codeSnippet ? `\n   - Code To Add/Replace:\n\`\`\`\n${issue.codeSnippet}\n\`\`\`` : ''}`)
+      .join('\n\n');
+
+    const promptText = `I ran an SEO and GEO (Generative Engine Optimization / AI Search) audit on my website (${audit.url}).
+
+CURRENT AUDIT RESULTS:
+- Overall Health Score: ${audit.overallScore}/100 (Grade ${audit.grade})
+- Google SEO Score: ${audit.seo.score}/100
+- AI Search (GEO) Score: ${audit.geo.score}/100
+- Page Performance Speed: ${audit.performance.score}/100
+- Insider & Security Score: ${audit.insider.score}/100
+
+GOAL:
+Fix all of the following detected issues in my project codebase accurately so my website scores 100/100 across Google SEO and AI Search (ChatGPT, Gemini, Perplexity, Claude).
+
+DETECTED ISSUES TO FIX:
+${issuesList}
+
+Please modify the necessary files in my codebase (e.g. index.html, robots.txt, public/llms.txt, Schema markup, meta tags, footer links, etc.) accurately.`;
+
+    navigator.clipboard.writeText(promptText);
+    setCopiedPrompt(true);
+    setTimeout(() => setCopiedPrompt(false), 3000);
   };
 
   return (
@@ -46,15 +75,38 @@ export const ScoreOverview: React.FC<ScoreOverviewProps> = ({ audit, lang }) => 
           </p>
         </div>
 
-        {/* Print / Export Button */}
-        <button
-          onClick={handlePrint}
-          className="btn btn-secondary"
-          style={{ padding: '8px 18px', fontSize: '0.88rem' }}
-        >
-          <Printer size={16} />
-          {lang === 'kn' ? 'ವರದಿ ಪ್ರಿಂಟ್ / PDF' : 'Print / Save PDF'}
-        </button>
+        {/* Action Buttons: 1-Click Copy AI Prompt & Print */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button
+            onClick={handleCopyAiPrompt}
+            className="btn btn-primary"
+            style={{
+              padding: '8px 18px',
+              fontSize: '0.88rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#1a73e8',
+              color: '#ffffff',
+              border: 'none',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+            }}
+          >
+            {copiedPrompt ? <Check size={16} /> : <Sparkles size={16} />}
+            {copiedPrompt
+              ? (lang === 'kn' ? 'ಪ್ರಾಂಪ್ಟ್ ಕಾಪಿ ಆಗಿದೆ!' : 'Prompt Copied!')
+              : (lang === 'kn' ? 'AI ಪ್ರಾಂಪ್ಟ್ ಕಾಪಿ (1-Click)' : 'Copy AI Fix Prompt')}
+          </button>
+
+          <button
+            onClick={handlePrint}
+            className="btn btn-secondary"
+            style={{ padding: '8px 18px', fontSize: '0.88rem' }}
+          >
+            <Printer size={16} />
+            {lang === 'kn' ? 'ವರದಿ ಪ್ರಿಂಟ್ / PDF' : 'Print / Save PDF'}
+          </button>
+        </div>
       </div>
 
       {/* Grid of Scores */}
