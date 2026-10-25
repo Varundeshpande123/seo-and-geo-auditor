@@ -121,6 +121,10 @@ export interface GeoMetrics {
   authorityTrust?: {
     score: number;
     hasPrivacyAndTerms: boolean;
+    hasPrivacyPolicy: boolean;
+    privacyStatus: string;
+    hasTerms: boolean;
+    termsStatus: string;
     contextualInternalLinks: number;
     feedback: string;
     status: 'good' | 'warning' | 'critical';

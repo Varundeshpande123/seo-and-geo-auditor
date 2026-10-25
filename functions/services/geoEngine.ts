@@ -4,10 +4,11 @@ export interface GeoOptions {
   html: string;
   robotsTxt?: string;
   llmsTxt?: string;
+  jsBundle?: string;
   targetUrl: string;
 }
 
-export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: GeoOptions): { geo: GeoMetrics; issues: AuditIssue[] } {
+export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', jsBundle = '', targetUrl }: GeoOptions): { geo: GeoMetrics; issues: AuditIssue[] } {
   const issues: AuditIssue[] = [];
   let geoScore = 100;
 
@@ -208,12 +209,28 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: Ge
   }
 
   // 6. Authority and Trust (GeoTest Medium Impact Issues)
-  // Check for Privacy Policy & Terms of Service links
-  const hasPrivacyLink = /<a\b[^>]*href=["'][^"']*(?:privacy|privacy-policy)[^"']*["']/i.test(html) || /privacy\s+policy/i.test(html);
-  const hasTermsLink = /<a\b[^>]*href=["'][^"']*(?:terms|terms-of-service|terms-and-conditions|tos)[^"']*["']/i.test(html) || /terms\s+of\s+service|terms\s*&\s*conditions/i.test(html);
-  const hasPrivacyAndTerms = hasPrivacyLink && hasTermsLink;
+  // Check for Privacy Policy & Terms of Service links in HTML and Client JS bundle
+  const hasPrivacyInHtml = /<a\b[^>]*href=["'][^"']*(?:privacy|privacy-policy)[^"']*["']/i.test(html) || /privacy\s+policy/i.test(html);
+  const hasPrivacyInBundle = /privacy\s*(?:policy|&\s*cookies)/i.test(jsBundle || '');
+  const hasPrivacyPolicy = hasPrivacyInHtml || hasPrivacyInBundle;
+  const privacyStatus = hasPrivacyInHtml
+    ? 'Found in static HTML'
+    : hasPrivacyInBundle
+    ? 'Found in client bundle (JS)'
+    : 'Not found in footer';
 
-  if (!hasPrivacyAndTerms) {
+  const hasTermsInHtml = /<a\b[^>]*href=["'][^"']*(?:terms|tender-terms|tos|conditions)[^"']*["']/i.test(html) || /(?:terms\s+of\s+service|terms\s*(?:&|and)\s*conditions|tender\s+terms|terms\s+of\s+use)/i.test(html);
+  const hasTermsInBundle = /(?:terms\s+of\s+service|terms\s*(?:&|and)\s*conditions|tender\s+terms|terms\s+of\s+use)/i.test(jsBundle || '');
+  const hasTerms = hasTermsInHtml || hasTermsInBundle;
+  const termsStatus = hasTermsInHtml
+    ? 'Found in static HTML'
+    : hasTermsInBundle
+    ? 'Found in client bundle (JS)'
+    : 'Not found in footer';
+
+  const hasPrivacyAndTerms = hasPrivacyPolicy && hasTerms;
+
+  if (!hasPrivacyPolicy && !hasTerms) {
     issues.push({
       id: 'privacy-and-terms-missing',
       category: 'geo',
@@ -221,7 +238,38 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: Ge
       title: 'Privacy and Terms links not found',
       description: 'Generative search engines (especially Google Gemini and Perplexity) verify organizational credibility and E-E-A-T trustworthiness by confirming the presence of accessible Privacy Policy and Terms of Service links.',
       recommendation: 'Ensure your footer contains clear, direct links to your Privacy Policy and Terms of Service pages.',
-      impactScore: 6
+      impactScore: 5
+    });
+  } else if (!hasPrivacyPolicy) {
+    issues.push({
+      id: 'privacy-missing',
+      category: 'geo',
+      severity: 'warning',
+      title: 'Privacy Policy link not found',
+      description: 'A verified Privacy Policy link in your footer is essential for AI search crawlers to establish trust and legal transparency.',
+      recommendation: 'Add a visible Privacy Policy link in your site footer.',
+      impactScore: 4
+    });
+  } else if (!hasTerms) {
+    issues.push({
+      id: 'terms-missing',
+      category: 'geo',
+      severity: 'info',
+      title: 'Terms of Service / Tender Terms not detected',
+      description: 'Having explicit Terms of Service, Tender Terms, or Conditions in your footer strengthens institutional authority for corporate and government tenders.',
+      recommendation: 'Ensure terms links (like Tender Terms or Terms of Service) are prominently linked in your footer.',
+      impactScore: 3
+    });
+  } else if ((hasPrivacyInBundle && !hasPrivacyInHtml) || (hasTermsInBundle && !hasTermsInHtml)) {
+    // Both are present, but rendered via client JavaScript
+    issues.push({
+      id: 'legal-links-in-js-bundle',
+      category: 'geo',
+      severity: 'info',
+      title: 'Privacy Policy & Terms rendered in Client JavaScript',
+      description: 'Privacy Policy and Terms links were detected in your client-side JavaScript bundle. However, raw AI bots (like GPTBot, ClaudeBot, and GeoTest) do not execute JavaScript and only inspect raw initial HTML.',
+      recommendation: 'Place static fallback <a> links in your root HTML footer (or enable SSR/prerendering) so non-JS AI search crawlers can index them directly.',
+      impactScore: 2
     });
   }
 
@@ -441,13 +489,21 @@ export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: Ge
         status: isJsDependent ? 'critical' : 'good',
       },
       authorityTrust: {
-        score: Math.round(((hasPrivacyAndTerms ? 50 : 15) + (!isFewContextualInternalLinks ? 50 : 20))),
+        score: Math.round(
+          ((hasPrivacyPolicy ? (hasPrivacyInHtml ? 25 : 22) : 5) +
+           (hasTerms ? (hasTermsInHtml ? 25 : 22) : 5) +
+           (!isFewContextualInternalLinks ? 50 : 20))
+        ),
         hasPrivacyAndTerms,
+        hasPrivacyPolicy,
+        privacyStatus,
+        hasTerms,
+        termsStatus,
         contextualInternalLinks: contextualInternalLinksCount,
-        feedback: hasPrivacyAndTerms
-          ? `Found verified trust links and ${contextualInternalLinksCount} contextual links.`
-          : 'Missing Privacy Policy / Terms of Service or in-text contextual links.',
-        status: hasPrivacyAndTerms && !isFewContextualInternalLinks ? 'good' : 'warning',
+        feedback: hasPrivacyPolicy && hasTerms
+          ? `Found verified trust links (${hasPrivacyInHtml && hasTermsInHtml ? 'Static HTML' : 'Client JS Bundle'}) and ${contextualInternalLinksCount} contextual link${contextualInternalLinksCount === 1 ? '' : 's'}.`
+          : 'Missing Privacy Policy or Terms of Service links in footer.',
+        status: hasPrivacyPolicy && hasTerms && !isFewContextualInternalLinks ? 'good' : 'warning',
       },
       aiBotAccess: {
         score: botScore,

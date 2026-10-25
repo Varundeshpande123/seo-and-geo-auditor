@@ -267,8 +267,8 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
               <Layers size={16} color="#137333" />
               <span>Authority & Trust (E-E-A-T)</span>
             </div>
-            <span className={`badge ${geo.authorityTrust?.hasPrivacyAndTerms ? 'badge-good' : 'badge-warning'}`}>
-              {geo.authorityTrust?.hasPrivacyAndTerms ? 'Verified Trust' : 'Missing Legal'}
+            <span className={`badge ${geo.authorityTrust?.hasPrivacyAndTerms ? 'badge-good' : (geo.authorityTrust?.hasPrivacyPolicy || geo.authorityTrust?.hasTerms ? 'badge-warning' : 'badge-critical')}`}>
+              {geo.authorityTrust?.hasPrivacyAndTerms ? 'Verified Trust' : (geo.authorityTrust?.hasPrivacyPolicy || geo.authorityTrust?.hasTerms ? 'Partial Legal' : 'Missing Legal')}
             </span>
           </div>
 
@@ -278,9 +278,15 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>
-              <span>Privacy & Terms Links:</span>
-              <span style={{ color: geo.authorityTrust?.hasPrivacyAndTerms ? '#137333' : '#c5221f', fontWeight: 600 }}>
-                {geo.authorityTrust?.hasPrivacyAndTerms ? 'Present' : 'Not found in footer'}
+              <span>Privacy Policy:</span>
+              <span style={{ color: geo.authorityTrust?.hasPrivacyPolicy ? '#137333' : '#c5221f', fontWeight: 600 }}>
+                {geo.authorityTrust?.privacyStatus || (geo.authorityTrust?.hasPrivacyPolicy ? 'Present' : 'Not found in footer')}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>
+              <span>Terms / Tender:</span>
+              <span style={{ color: geo.authorityTrust?.hasTerms ? '#137333' : '#c5221f', fontWeight: 600 }}>
+                {geo.authorityTrust?.termsStatus || (geo.authorityTrust?.hasTerms ? 'Present' : 'Not found in footer')}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>

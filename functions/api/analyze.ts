@@ -89,10 +89,14 @@ export async function onRequest(context: any): Promise<Response> {
 
     const html = await pageResponse.text();
 
-    // 2. Fetch Robots.txt and llms.txt in parallel for GEO checks
+    // 2. Fetch Robots.txt, llms.txt, and client bundle in parallel for GEO checks
     let robotsTxt = '';
     let llmsTxt = '';
+    let jsBundle = '';
     const originUrl = new URL(targetUrl).origin;
+
+    const scriptMatch = html.match(/<script[^>]+src=["'](\/assets\/index-[^"']+\.js|[^\s"']+\/index-[^"']+\.js)["']/i);
+    const bundleUrl = scriptMatch ? `${originUrl}${scriptMatch[1].startsWith('/') ? '' : '/'}${scriptMatch[1]}` : null;
 
     await Promise.allSettled([
       (async () => {
@@ -115,6 +119,17 @@ export async function onRequest(context: any): Promise<Response> {
           }
         } catch {}
       })(),
+      (async () => {
+        if (!bundleUrl) return;
+        try {
+          const bundleRes = await fetch(bundleUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0 SEO-GEO-Auditor' },
+          });
+          if (bundleRes.ok) {
+            jsBundle = await bundleRes.text();
+          }
+        } catch {}
+      })(),
     ]);
 
     // Extract response headers
@@ -125,7 +140,7 @@ export async function onRequest(context: any): Promise<Response> {
 
     // 3. Run Analysis Engines in Parallel
     const seoResult = analyzeSeo(html, targetUrl);
-    const geoResult = analyzeGeo({ html, robotsTxt, llmsTxt, targetUrl });
+    const geoResult = analyzeGeo({ html, robotsTxt, llmsTxt, jsBundle, targetUrl });
     const speedResult = await analyzeSpeed(targetUrl, startTime, html.length, env?.GOOGLE_PAGESPEED_API_KEY);
     const insiderResult = analyzeInsiderMetrics({ html, targetUrl, responseHeaders: headersMap });
 
