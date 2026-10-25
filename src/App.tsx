@@ -307,10 +307,58 @@ export function App() {
 
                     <ScoreOverview audit={auditResult} lang={lang} />
 
-                    {/* Quick 1-Click Code Exporter */}
-                    <QuickFixGenerator audit={auditResult} lang={lang} />
+                    {/* Quick Wins Opportunity Banner */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, #e8f0fe 0%, #f1f3f4 100%)',
+                      border: '1px solid #c2e7ff',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '22px 28px',
+                      marginBottom: '28px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '20px',
+                      flexWrap: 'wrap',
+                    }}>
+                      <div style={{ maxWidth: '650px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                          <span style={{ fontSize: '1.25rem' }}>🚀</span>
+                          <h3 style={{ fontSize: '1.12rem', fontWeight: 700, color: '#174ea6', margin: 0 }}>
+                            {lang === 'kn'
+                              ? `ತ್ವರಿತ ಫಲಿತಾಂಶ: ಕೇವಲ 3 ಸಣ್ಣ ಬದಲಾವಣೆಗಳಿಂದ ಸ್ಕೋರ್ ${Math.min(100, auditResult.overallScore + 25)}+ ಕ್ಕೆ ಏರಬಹುದು!`
+                              : `Quick Win: 3 high-impact fixes can boost your score to ${Math.min(100, auditResult.overallScore + 25)}+!`}
+                          </h3>
+                        </div>
+                        <p style={{ fontSize: '0.86rem', color: '#3c4043', margin: 0, lineHeight: 1.5 }}>
+                          {lang === 'kn'
+                            ? 'robots.txt AI ಬಾಟ್‌ಗಳ ಅನುಮತಿ, /llms.txt ಪ್ರೋಟೋಕಾಲ್, ಮತ್ತು Schema ಕೋಡ್ ಅನ್ನು 1-ಕ್ಲಿಕ್‌ನಲ್ಲಿ ಪಡೆದು ಅಪ್ಲೈ ಮಾಡಿ.'
+                            : 'AI Search robots.txt, /llms.txt protocol, and Organization Schema are pre-generated and ready for 1-click deployment.'}
+                        </p>
+                      </div>
 
-                    {/* Full Actionable Issues Table */}
+                      <button
+                        onClick={() => setActiveTab('fixes')}
+                        className="btn btn-primary"
+                        style={{
+                          padding: '10px 22px',
+                          fontSize: '0.9rem',
+                          fontWeight: 600,
+                          background: '#1a73e8',
+                          color: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          border: 'none',
+                          boxShadow: '0 2px 6px rgba(26,115,232,0.25)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <span>⚡ {lang === 'kn' ? '1-ಕ್ಲಿಕ್ AI ಕೋಡ್ ಫಿಕ್ಸ್‌ಗಳನ್ನು ನೋಡಿ' : 'View 1-Click AI Fixes'}</span>
+                        <span>→</span>
+                      </button>
+                    </div>
+
+                    {/* Full Actionable Issues Table with Filters and Collapse */}
                     <IssuesList
                       issues={auditResult.issues}
                       lang={lang}
