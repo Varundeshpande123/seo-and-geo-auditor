@@ -84,7 +84,7 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
             {insider.informationGain.feedback}
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-dim)' }}>
               <span>Reading Time:</span>
               <span style={{ color: '#f1f5f9' }}>~{insider.informationGain.readingTimeMin} min</span>
@@ -94,6 +94,36 @@ export const InsiderAuditCard: React.FC<InsiderAuditCardProps> = ({ insider, lan
               <span style={{ color: '#38bdf8' }}>{insider.informationGain.lexicalRichnessPercent}% unique</span>
             </div>
           </div>
+
+          {/* Top Keywords Density Badges */}
+          {insider.keywords && insider.keywords.length > 0 && (
+            <div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', fontWeight: 600, marginBottom: '6px' }}>
+                {lang === 'kn' ? 'ಪ್ರಮುಖ ಕೀವರ್ಡ್‌ಗಳ ಡೆನ್ಸಿಟಿ:' : 'Top Recurring Keywords:'}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {insider.keywords.map((kw, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      background: kw.isOverOptimized ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                      border: kw.isOverOptimized ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid var(--border-subtle)',
+                      color: kw.isOverOptimized ? '#f87171' : '#e2e8f0',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                    title={kw.isOverOptimized ? 'Warning: High keyword density (>4.5%)' : ''}
+                  >
+                    <strong>{kw.word}</strong> ({kw.count} • {kw.densityPercent}%)
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 2. Crawl Budget & DOM Architecture */}

@@ -189,6 +189,53 @@ export const SeoAuditCard: React.FC<SeoAuditCardProps> = ({ seo, lang, onOpenFix
             </p>
           </div>
         </div>
+
+        {/* 2-Column: Mobile Viewport & Link Architecture */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '16px',
+        }}>
+          {/* Mobile Viewport */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.02)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-md)',
+            padding: '16px 20px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Link2 size={16} color="#38bdf8" /> Mobile Viewport
+              </span>
+              <span className={`badge ${getBadgeClass(seo.mobileViewport?.status || 'good')}`}>
+                {seo.mobileViewport?.hasViewport ? 'Responsive' : 'Missing'}
+              </span>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              {seo.mobileViewport?.feedback || 'Mobile viewport properly configured.'}
+            </p>
+          </div>
+
+          {/* Link Architecture */}
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.02)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-md)',
+            padding: '16px 20px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Link2 size={16} color="#10b981" /> Link Architecture
+              </span>
+              <span className={`badge ${seo.links?.brokenOrNoHref > 0 ? 'badge-warning' : 'badge-good'}`}>
+                {seo.links?.total || 0} Links
+              </span>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
+              {seo.links?.internal || 0} Internal • {seo.links?.external || 0} External • {seo.links?.brokenOrNoHref || 0} Dead/Hash
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

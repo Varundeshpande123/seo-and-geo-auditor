@@ -3,6 +3,7 @@ import { Navbar } from './components/Navbar';
 import { LoginPage } from './components/LoginPage';
 import { HeroSearch } from './components/HeroSearch';
 import { ScoreOverview } from './components/ScoreOverview';
+import { CompetitorBattleCard } from './components/CompetitorBattleCard';
 import { GeoAuditCard } from './components/GeoAuditCard';
 import { SeoAuditCard } from './components/SeoAuditCard';
 import { SpeedAuditCard } from './components/SpeedAuditCard';
@@ -17,6 +18,7 @@ export function App() {
   const [lang, setLang] = useState<'kn' | 'en'>('kn');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [auditResult, setAuditResult] = useState<FullAuditResult | null>(null);
+  const [competitorResult, setCompetitorResult] = useState<FullAuditResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [scanStep, setScanStep] = useState<string>('');
   const [selectedIssue, setSelectedIssue] = useState<AuditIssue | null>(null);
@@ -42,19 +44,19 @@ export function App() {
     setIsAuthenticated(false);
   };
 
-  const handleAnalyze = async (url: string) => {
+  const handleAnalyze = async (url: string, competitorUrl?: string) => {
     setIsLoading(true);
 
     const steps = lang === 'kn' ? [
       'ಹೋಸ್ಟ್ ಜೊತೆ ಸಂಪರ್ಕ ಸಾಧಿಸಲಾಗುತ್ತಿದೆ (DNS & SSL)...',
       'AI ಕ್ರಾಲರ್‌ಗಳನ್ನು ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ (GPTBot, PerplexityBot, Claude)...',
-      'Schema.org Knowledge Graph ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...',
-      'Core Web Vitals ಮತ್ತು ಲೋಡ್ ಸ್ಪೀಡ್ ಲೆಕ್ಕಾಚಾರ...'
+      'Schema.org Knowledge Graph ಮತ್ತು ಪದಗಳ ಎಣಿಕೆ...',
+      'Core Web Vitals ಮತ್ತು ಪ್ರತಿಸ್ಪರ್ಧಿ ಹೋಲಿಕೆ ಲೆಕ್ಕಾಚಾರ...'
     ] : [
       'Establishing secure connection (DNS & SSL)...',
       'Auditing AI Crawlers (GPTBot, PerplexityBot, Claude)...',
-      'Parsing Schema.org Knowledge Graph...',
-      'Evaluating Core Web Vitals and PageSpeed...'
+      'Parsing Schema.org Knowledge Graph & Keywords...',
+      'Evaluating Core Web Vitals and Performance...'
     ];
 
     let currentStep = 0;
@@ -67,9 +69,20 @@ export function App() {
     }, 450);
 
     try {
-      const result = await runWebsiteAudit(url);
-      clearInterval(stepInterval);
-      setAuditResult(result);
+      if (competitorUrl) {
+        const [res1, res2] = await Promise.all([
+          runWebsiteAudit(url),
+          runWebsiteAudit(competitorUrl),
+        ]);
+        clearInterval(stepInterval);
+        setAuditResult(res1);
+        setCompetitorResult(res2);
+      } else {
+        const result = await runWebsiteAudit(url);
+        clearInterval(stepInterval);
+        setAuditResult(result);
+        setCompetitorResult(null);
+      }
     } catch (err) {
       console.error(err);
       clearInterval(stepInterval);
@@ -110,6 +123,15 @@ export function App() {
 
             {auditResult && (
               <div className="container" style={{ paddingBottom: '60px' }}>
+                {/* Competitor Comparison Battle Mode Card */}
+                {competitorResult && (
+                  <CompetitorBattleCard
+                    audit1={auditResult}
+                    audit2={competitorResult}
+                    lang={lang}
+                  />
+                )}
+
                 <ScoreOverview audit={auditResult} lang={lang} />
 
                 {/* GEO AI Search Card - Key Differentiator */}
@@ -119,7 +141,7 @@ export function App() {
                   onOpenFix={handleOpenFixById}
                 />
 
-                {/* Traditional SEO Card */}
+                {/* Traditional SEO Card (with Mobile Viewport & Link Architecture) */}
                 <SeoAuditCard
                   seo={auditResult.seo}
                   lang={lang}
@@ -132,7 +154,7 @@ export function App() {
                   lang={lang}
                 />
 
-                {/* Advanced Insider & Secret Metrics Card */}
+                {/* Advanced Insider & Secret Metrics Card (with Top Keywords Density) */}
                 {auditResult.insider && (
                   <InsiderAuditCard
                     insider={auditResult.insider}

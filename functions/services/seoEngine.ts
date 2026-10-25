@@ -196,7 +196,103 @@ export function analyzeSeo(html: string, targetUrl: string): { seo: SeoMetrics; 
     });
   }
 
-  // 7. Calculate SEO Score
+  // 7. Mobile Viewport Check
+  const viewportMatch = html.match(/<meta[^>]*name=["']viewport["'][^>]*content=["']([^"']*)["'][^>]*>/i) ||
+                        html.match(/<meta[^>]*content=["']([^"']*)["'][^>]*name=["']viewport["'][^>]*>/i);
+  const viewportContent = viewportMatch ? viewportMatch[1].toLowerCase() : '';
+  const hasViewport = Boolean(viewportMatch);
+  const isResponsive = viewportContent.includes('width=device-width');
+  const userScalableAllowed = !viewportContent.includes('user-scalable=no') && !viewportContent.includes('maximum-scale=1');
+
+  let viewportStatus: 'good' | 'warning' | 'critical' = 'good';
+  let viewportFeedback = 'Mobile viewport is configured with responsive width scaling.';
+
+  if (!hasViewport) {
+    viewportStatus = 'critical';
+    viewportFeedback = 'Missing <meta name="viewport"> tag! Google will treat the page as non-mobile-friendly.';
+    issues.push({
+      id: 'missing-viewport-meta',
+      category: 'seo',
+      severity: 'critical',
+      title: 'Missing Mobile Viewport Meta Tag',
+      description: 'Without a viewport meta tag, mobile devices render the page at desktop width, hurting mobile rankings and readability.',
+      recommendation: 'Add the standard responsive viewport meta tag to your <head> section.',
+      codeSnippet: `<meta name="viewport" content="width=device-width, initial-scale=1.0" />`,
+      impactScore: 10,
+    });
+  } else if (!isResponsive) {
+    viewportStatus = 'warning';
+    viewportFeedback = 'Viewport tag is present but missing "width=device-width".';
+  } else if (!userScalableAllowed) {
+    viewportStatus = 'warning';
+    viewportFeedback = 'Viewport blocks pinch-to-zoom (user-scalable=no), which hurts accessibility score.';
+  }
+
+  // 8. Link Architecture Analysis
+  let domain = '';
+  try {
+    domain = new URL(targetUrl).hostname.replace(/^www\./, '');
+  } catch {
+    domain = targetUrl;
+  }
+
+  const linkMatches = Array.from(html.matchAll(/<a\b([^>]*)>/gi));
+  let internalLinks = 0;
+  let externalLinks = 0;
+  let secureExternalLinks = 0;
+  let brokenOrNoHref = 0;
+
+  for (const match of linkMatches) {
+    const attrs = match[1];
+    const hrefMatch = attrs.match(/\bhref=["']([^"']*)["']/i);
+    const href = hrefMatch ? hrefMatch[1].trim() : '';
+
+    if (!href || href === '#' || href.toLowerCase().startsWith('javascript:')) {
+      brokenOrNoHref++;
+    } else if (href.startsWith('/') || href.startsWith('#') || href.includes(domain)) {
+      internalLinks++;
+    } else if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//')) {
+      externalLinks++;
+      if (/\brel=["'][^"']*(?:noopener|noreferrer)[^"']*["']/i.test(attrs)) {
+        secureExternalLinks++;
+      }
+    } else {
+      internalLinks++;
+    }
+  }
+
+  let linkStatus: 'good' | 'warning' | 'critical' = 'good';
+  let linkFeedback = `Found ${internalLinks} internal links and ${externalLinks} external links.`;
+
+  if (brokenOrNoHref > 3) {
+    linkStatus = 'warning';
+    linkFeedback = `${brokenOrNoHref} links have empty href="#" or dead triggers.`;
+    issues.push({
+      id: 'dead-hash-links',
+      category: 'seo',
+      severity: 'warning',
+      title: `${brokenOrNoHref} Dead or Empty Links Detected`,
+      description: 'Found links with empty href="#" or javascript triggers. Search crawlers cannot follow these links and may flag them as broken.',
+      recommendation: 'Replace placeholder href="#" with valid descriptive URLs or semantic <button> elements.',
+      impactScore: 5,
+    });
+  }
+
+  if (externalLinks > 0 && secureExternalLinks < externalLinks) {
+    const insecureExternal = externalLinks - secureExternalLinks;
+    issues.push({
+      id: 'missing-noopener-external-links',
+      category: 'security',
+      severity: 'info',
+      title: `${insecureExternal} External Link(s) Missing rel="noopener"`,
+      description: 'External links without rel="noopener noreferrer" can expose your site to tabnabbing vulnerabilities and performance overhead.',
+      recommendation: 'Add rel="noopener noreferrer" to external outbound links.',
+      codeSnippet: `<a href="https://example.com" target="_blank" rel="noopener noreferrer">Visit Site</a>`,
+      impactScore: 4,
+    });
+  }
+
+  // 9. Calculate SEO Score
   let score = 100;
   if (!title) score -= 25;
   else if (titleLength < 30 || titleLength > 65) score -= 10;
@@ -210,6 +306,7 @@ export function analyzeSeo(html: string, targetUrl: string): { seo: SeoMetrics; 
   if (!canonicalUrl) score -= 10;
   if (!ogTitle || !ogImage) score -= 10;
   if (missingAltCount > 0) score -= Math.min(15, missingAltCount * 3);
+  if (!hasViewport) score -= 20;
 
   score = Math.max(10, Math.min(100, score));
 
@@ -225,7 +322,7 @@ export function analyzeSeo(html: string, targetUrl: string): { seo: SeoMetrics; 
         h3Count,
         isHierarchyValid: h1Tags.length === 1,
         status: headingStatus,
-        feedback: headingFeedback
+        feedback: headingFeedback,
       },
       canonical: { url: canonicalUrl, status: canonicalStatus, feedback: canonicalFeedback },
       openGraph: {
@@ -233,21 +330,31 @@ export function analyzeSeo(html: string, targetUrl: string): { seo: SeoMetrics; 
         hasDescription: ogDesc,
         hasImage: ogImage,
         imageCount: (html.match(/property=["']og:image["']/gi) || []).length,
-        status: ogStatus
+        status: ogStatus,
       },
       images: {
         total: imgMatches.length,
         missingAlt: missingAltCount,
         sampleMissingAlt,
-        status: imgStatus
+        status: imgStatus,
       },
       links: {
-        total: (html.match(/<a\b/gi) || []).length,
-        internal: 0,
-        external: 0,
-        brokenOrNoHref: 0
-      }
+        total: linkMatches.length,
+        internal: internalLinks,
+        external: externalLinks,
+        secureExternal: secureExternalLinks,
+        brokenOrNoHref,
+        status: linkStatus,
+        feedback: linkFeedback,
+      },
+      mobileViewport: {
+        hasViewport,
+        isResponsive,
+        userScalableAllowed,
+        status: viewportStatus,
+        feedback: viewportFeedback,
+      },
     },
-    issues
+    issues,
   };
 }

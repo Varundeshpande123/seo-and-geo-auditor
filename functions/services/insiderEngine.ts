@@ -50,6 +50,45 @@ export function analyzeInsiderMetrics({ html, targetUrl, responseHeaders = {} }:
     insiderScore -= 10;
   }
 
+  // 1b. Keyword Frequency & Density Calculation
+  const stopWords = new Set([
+    'the', 'and', 'for', 'that', 'this', 'with', 'from', 'your', 'have', 'more',
+    'about', 'what', 'when', 'where', 'will', 'page', 'site', 'home', 'click',
+    'are', 'was', 'were', 'been', 'being', 'they', 'them', 'their', 'our', 'out',
+    'not', 'but', 'all', 'any', 'can', 'has', 'had', 'its', 'into', 'just', 'how'
+  ]);
+
+  const freqMap: Record<string, number> = {};
+  for (const w of words) {
+    const lower = w.toLowerCase();
+    if (lower.length > 3 && !stopWords.has(lower) && !/^\d+$/.test(lower)) {
+      freqMap[lower] = (freqMap[lower] || 0) + 1;
+    }
+  }
+
+  const sortedKeywords = Object.entries(freqMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([word, count]) => {
+      const densityPercent = wordCount > 0 ? parseFloat(((count / wordCount) * 100).toFixed(1)) : 0;
+      const isOverOptimized = densityPercent > 4.5;
+      return { word, count, densityPercent, isOverOptimized };
+    });
+
+  // Flag keyword stuffing if any keyword > 4.5%
+  const stuffedKeywords = sortedKeywords.filter((k) => k.isOverOptimized);
+  if (stuffedKeywords.length > 0) {
+    issues.push({
+      id: 'keyword-stuffing',
+      category: 'insider',
+      severity: 'warning',
+      title: `Keyword Stuffing Warning (${stuffedKeywords.map((k) => `"${k.word}" (${k.densityPercent}%)`).join(', ')})`,
+      description: 'Keywords with density above 4.5% can trigger Google algorithm penalties for unnatural repetition.',
+      recommendation: 'Use synonyms and natural semantic variations (LSI keywords) instead of repeating the exact same word.',
+      impactScore: 6,
+    });
+  }
+
   // 2. DOM Architecture & Crawl Budget Waste
   const allTagMatches = html.match(/<[a-z0-9]+/gi) || [];
   const totalElements = allTagMatches.length;
@@ -156,6 +195,7 @@ export function analyzeInsiderMetrics({ html, targetUrl, responseHeaders = {} }:
         status: infoStatus,
         feedback: infoFeedback,
       },
+      keywords: sortedKeywords,
       domArchitecture: {
         totalElements,
         textToHtmlRatio,

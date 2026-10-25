@@ -9,6 +9,13 @@ export interface AuditIssue {
   impactScore: number; // 1-10
 }
 
+export interface KeywordDensityItem {
+  word: string;
+  count: number;
+  densityPercent: number;
+  isOverOptimized: boolean; // >5% is keyword stuffing
+}
+
 export interface SeoMetrics {
   score: number; // 0-100
   title: {
@@ -54,7 +61,17 @@ export interface SeoMetrics {
     total: number;
     internal: number;
     external: number;
+    secureExternal: number;
     brokenOrNoHref: number;
+    status: 'good' | 'warning' | 'critical';
+    feedback: string;
+  };
+  mobileViewport: {
+    hasViewport: boolean;
+    isResponsive: boolean;
+    userScalableAllowed: boolean;
+    status: 'good' | 'warning' | 'critical';
+    feedback: string;
   };
 }
 
@@ -105,10 +122,11 @@ export interface InsiderMetrics {
   informationGain: {
     wordCount: number;
     readingTimeMin: number;
-    lexicalRichnessPercent: number; // Unique words ratio
+    lexicalRichnessPercent: number;
     status: 'good' | 'warning' | 'critical';
     feedback: string;
   };
+  keywords: KeywordDensityItem[];
   domArchitecture: {
     totalElements: number;
     textToHtmlRatio: number; // percentage
@@ -125,7 +143,7 @@ export interface InsiderMetrics {
   };
   aiHallucinationRisk: {
     riskLevel: 'Low' | 'Moderate' | 'High';
-    factDensityScore: number; // 0-100
+    factDensityScore: number;
     feedback: string;
   };
 }
