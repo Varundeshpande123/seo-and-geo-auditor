@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
+import { LoginPage } from './components/LoginPage';
 import { HeroSearch } from './components/HeroSearch';
 import { ScoreOverview } from './components/ScoreOverview';
 import { GeoAuditCard } from './components/GeoAuditCard';
@@ -13,15 +14,32 @@ import type { FullAuditResult, AuditIssue } from './types/audit';
 
 export function App() {
   const [lang, setLang] = useState<'kn' | 'en'>('kn');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [auditResult, setAuditResult] = useState<FullAuditResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [scanStep, setScanStep] = useState<string>('');
   const [selectedIssue, setSelectedIssue] = useState<AuditIssue | null>(null);
 
-  // Auto-scan somashekhar.in on initial load for instant demonstration
+  // Check auth session on mount
   useEffect(() => {
-    handleAnalyze('somashekhar.in');
+    const token = localStorage.getItem('seo_geo_auth_token');
+    if (token === 'authenticated_somu1008') {
+      setIsAuthenticated(true);
+      handleAnalyze('somashekhar.in');
+    }
   }, []);
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    if (!auditResult) {
+      handleAnalyze('somashekhar.in');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('seo_geo_auth_token');
+    setIsAuthenticated(false);
+  };
 
   const handleAnalyze = async (url: string) => {
     setIsLoading(true);
@@ -70,47 +88,58 @@ export function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar lang={lang} setLang={setLang} />
+      <Navbar
+        lang={lang}
+        setLang={setLang}
+        isAuthenticated={isAuthenticated}
+        onLogout={handleLogout}
+      />
 
       <main style={{ flex: 1 }}>
-        <HeroSearch
-          onAnalyze={handleAnalyze}
-          isLoading={isLoading}
-          scanStep={scanStep}
-          lang={lang}
-        />
-
-        {auditResult && (
-          <div className="container" style={{ paddingBottom: '60px' }}>
-            <ScoreOverview audit={auditResult} lang={lang} />
-
-            {/* GEO AI Search Card - Key Differentiator */}
-            <GeoAuditCard
-              geo={auditResult.geo}
-              lang={lang}
-              onOpenFix={handleOpenFixById}
-            />
-
-            {/* Traditional SEO Card */}
-            <SeoAuditCard
-              seo={auditResult.seo}
-              lang={lang}
-              onOpenFix={handleOpenFixById}
-            />
-
-            {/* Performance & Core Web Vitals */}
-            <SpeedAuditCard
-              performance={auditResult.performance}
+        {!isAuthenticated ? (
+          <LoginPage onLoginSuccess={handleLoginSuccess} lang={lang} />
+        ) : (
+          <>
+            <HeroSearch
+              onAnalyze={handleAnalyze}
+              isLoading={isLoading}
+              scanStep={scanStep}
               lang={lang}
             />
 
-            {/* Master Actionable Issues List */}
-            <IssuesList
-              issues={auditResult.issues}
-              lang={lang}
-              onSelectIssue={(issue) => setSelectedIssue(issue)}
-            />
-          </div>
+            {auditResult && (
+              <div className="container" style={{ paddingBottom: '60px' }}>
+                <ScoreOverview audit={auditResult} lang={lang} />
+
+                {/* GEO AI Search Card - Key Differentiator */}
+                <GeoAuditCard
+                  geo={auditResult.geo}
+                  lang={lang}
+                  onOpenFix={handleOpenFixById}
+                />
+
+                {/* Traditional SEO Card */}
+                <SeoAuditCard
+                  seo={auditResult.seo}
+                  lang={lang}
+                  onOpenFix={handleOpenFixById}
+                />
+
+                {/* Performance & Core Web Vitals */}
+                <SpeedAuditCard
+                  performance={auditResult.performance}
+                  lang={lang}
+                />
+
+                {/* Master Actionable Issues List */}
+                <IssuesList
+                  issues={auditResult.issues}
+                  lang={lang}
+                  onSelectIssue={(issue) => setSelectedIssue(issue)}
+                />
+              </div>
+            )}
+          </>
         )}
       </main>
 

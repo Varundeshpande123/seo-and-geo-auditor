@@ -1,12 +1,19 @@
 import React from 'react';
-import { Globe, Sparkles } from 'lucide-react';
+import { Globe, Sparkles, LogOut, UserCheck } from 'lucide-react';
 
 interface NavbarProps {
   lang: 'kn' | 'en';
   setLang: (lang: 'kn' | 'en') => void;
+  isAuthenticated?: boolean;
+  onLogout?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ lang, setLang }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  lang,
+  setLang,
+  isAuthenticated = false,
+  onLogout,
+}) => {
   return (
     <header style={{
       borderBottom: '1px solid var(--border-subtle)',
@@ -15,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({ lang, setLang }) => {
       position: 'sticky',
       top: 0,
       zIndex: 50,
-      padding: '16px 0'
+      padding: '16px 0',
     }}>
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {/* Brand */}
@@ -28,7 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({ lang, setLang }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 15px rgba(99, 102, 241, 0.35)'
+            boxShadow: '0 4px 15px rgba(99, 102, 241, 0.35)',
           }}>
             <Sparkles size={22} color="#ffffff" />
           </div>
@@ -48,21 +55,24 @@ export const Navbar: React.FC<NavbarProps> = ({ lang, setLang }) => {
           </div>
         </div>
 
-        {/* Right Info & Lang */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{
-            display: 'none',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            padding: '6px 14px',
-            borderRadius: 'var(--radius-full)',
-            border: '1px solid var(--border-subtle)',
-            fontSize: '0.82rem'
-          }} className="edge-badge">
-            <span className="pulse-dot"></span>
-            <span style={{ color: 'var(--text-muted)' }}>Cloudflare Edge</span>
-          </div>
+        {/* Right Info, User & Lang */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {isAuthenticated && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.25)',
+              padding: '5px 12px',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '0.8rem',
+              color: '#34d399',
+            }}>
+              <UserCheck size={14} />
+              <span>somu1008</span>
+            </div>
+          )}
 
           {/* Language Switcher */}
           <div style={{
@@ -70,7 +80,7 @@ export const Navbar: React.FC<NavbarProps> = ({ lang, setLang }) => {
             background: 'rgba(255, 255, 255, 0.06)',
             borderRadius: 'var(--radius-md)',
             padding: '3px',
-            border: '1px solid var(--border-subtle)'
+            border: '1px solid var(--border-subtle)',
           }}>
             <button
               onClick={() => setLang('kn')}
@@ -83,7 +93,7 @@ export const Navbar: React.FC<NavbarProps> = ({ lang, setLang }) => {
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
               }}
             >
               ಕನ್ನಡ
@@ -99,12 +109,25 @@ export const Navbar: React.FC<NavbarProps> = ({ lang, setLang }) => {
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
               }}
             >
               English
             </button>
           </div>
+
+          {/* Logout Button */}
+          {isAuthenticated && onLogout && (
+            <button
+              onClick={onLogout}
+              className="btn btn-secondary"
+              title={lang === 'kn' ? 'ಲಾಗ್‌ಔಟ್' : 'Logout'}
+              style={{ padding: '6px 12px', fontSize: '0.82rem', gap: '6px' }}
+            >
+              <LogOut size={14} />
+              <span>{lang === 'kn' ? 'ಲಾಗ್‌ಔಟ್' : 'Logout'}</span>
+            </button>
+          )}
         </div>
       </div>
     </header>
