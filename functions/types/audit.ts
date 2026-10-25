@@ -104,6 +104,16 @@ export interface GeoMetrics {
     feedback: string;
   };
   aiRecommendation: string;
+  shareOfVoice: {
+    percentage: number; // 0-100%
+    rating: 'Dominant' | 'Competitive' | 'Moderate' | 'Low';
+    summary: string;
+  };
+  promptDiscovery: {
+    prompt: string;
+    intent: 'Informational' | 'Commercial' | 'Comparative';
+    suggestedEngine: 'ChatGPT' | 'Perplexity' | 'Gemini';
+  }[];
 }
 
 export interface PerformanceMetrics {

@@ -32,6 +32,12 @@ export const CompetitorBattleCard: React.FC<CompetitorBattleCardProps> = ({ audi
       win1: audit1.geo.score >= audit2.geo.score,
     },
     {
+      title: 'AI Share of Voice (SOV)',
+      val1: `${audit1.geo.shareOfVoice?.percentage || audit1.geo.score}%`,
+      val2: `${audit2.geo.shareOfVoice?.percentage || audit2.geo.score}%`,
+      win1: (audit1.geo.shareOfVoice?.percentage || audit1.geo.score) >= (audit2.geo.shareOfVoice?.percentage || audit2.geo.score),
+    },
+    {
       title: 'PageSpeed & Performance',
       val1: `${audit1.performance.score}%`,
       val2: `${audit2.performance.score}%`,

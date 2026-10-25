@@ -189,6 +189,61 @@ export function analyzeGeo({ html, robotsTxt = '', targetUrl }: GeoOptions): { g
     aiRecommendation = 'Moderate: Your site can be cited, but needs clearer entity schemas and question-answer formatting to win top generative citations.';
   }
 
+  // Calculate AI Share of Voice (SOV)
+  const sovPercentage = Math.round((botScore * 0.40) + (structuredScore * 0.35) + (citationScore * 0.25));
+  let sovRating: 'Dominant' | 'Competitive' | 'Moderate' | 'Low' = 'Moderate';
+  if (sovPercentage >= 80) sovRating = 'Dominant';
+  else if (sovPercentage >= 65) sovRating = 'Competitive';
+  else if (sovPercentage < 45) sovRating = 'Low';
+
+  const sovSummary = sovRating === 'Dominant'
+    ? 'High brand visibility across generative search engines with strong citation probability.'
+    : sovRating === 'Competitive'
+    ? 'Good visibility, competing strongly for top generative search citations.'
+    : 'Limited visibility in AI search. Risk of competitors dominating generative answers.';
+
+  // Dynamic Prompt & Question Discovery
+  let brandTopic = 'your brand';
+  try {
+    brandTopic = new URL(targetUrl).hostname.replace(/^www\./, '').split('.')[0];
+    brandTopic = brandTopic.charAt(0).toUpperCase() + brandTopic.slice(1);
+  } catch {
+    brandTopic = 'this domain';
+  }
+
+  const promptDiscovery = [
+    {
+      prompt: `What are the core solutions, features, and expertise offered by ${brandTopic}?`,
+      intent: 'Informational' as const,
+      suggestedEngine: 'ChatGPT' as const,
+    },
+    {
+      prompt: `Is ${brandTopic} reliable and what do verified customer reviews say about it?`,
+      intent: 'Commercial' as const,
+      suggestedEngine: 'Perplexity' as const,
+    },
+    {
+      prompt: `Top alternatives and competitors to ${brandTopic} in 2026`,
+      intent: 'Comparative' as const,
+      suggestedEngine: 'Gemini' as const,
+    },
+    {
+      prompt: `How does ${brandTopic} help businesses optimize performance and achieve growth?`,
+      intent: 'Informational' as const,
+      suggestedEngine: 'ChatGPT' as const,
+    },
+    {
+      prompt: `Pricing, contact details, and service offerings for ${brandTopic}`,
+      intent: 'Commercial' as const,
+      suggestedEngine: 'Perplexity' as const,
+    },
+    {
+      prompt: `Step-by-step implementation guide and case studies from ${brandTopic}`,
+      intent: 'Comparative' as const,
+      suggestedEngine: 'Gemini' as const,
+    },
+  ];
+
   return {
     geo: {
       score: calculatedGeoScore,
@@ -196,7 +251,7 @@ export function analyzeGeo({ html, robotsTxt = '', targetUrl }: GeoOptions): { g
         score: botScore,
         bots: botResults,
         status: botStatus,
-        feedback: botFeedback
+        feedback: botFeedback,
       },
       structuredData: {
         score: structuredScore,
@@ -204,7 +259,7 @@ export function analyzeGeo({ html, robotsTxt = '', targetUrl }: GeoOptions): { g
         hasOrganizationOrPerson,
         hasKnowledgeGraphEntities,
         status: schemaStatus,
-        feedback: schemaFeedback
+        feedback: schemaFeedback,
       },
       citationReadiness: {
         score: citationScore,
@@ -212,10 +267,16 @@ export function analyzeGeo({ html, robotsTxt = '', targetUrl }: GeoOptions): { g
         faqOrQaFormatFound,
         tabularDataFound,
         listsCount,
-        feedback: `Found ${listsCount} structured lists, ${tabularDataFound ? 'data tables' : 'no tables'}, and ${faqOrQaFormatFound ? 'conversational Q&A headers' : 'standard headers'}.`
+        feedback: `Found ${listsCount} structured lists, ${tabularDataFound ? 'data tables' : 'no tables'}, and ${faqOrQaFormatFound ? 'conversational Q&A headers' : 'standard headers'}.`,
       },
-      aiRecommendation
+      aiRecommendation,
+      shareOfVoice: {
+        percentage: sovPercentage,
+        rating: sovRating,
+        summary: sovSummary,
+      },
+      promptDiscovery,
     },
-    issues
+    issues,
   };
 }

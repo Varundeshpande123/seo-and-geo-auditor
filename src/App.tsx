@@ -5,6 +5,7 @@ import { HeroSearch } from './components/HeroSearch';
 import { ScoreOverview } from './components/ScoreOverview';
 import { CompetitorBattleCard } from './components/CompetitorBattleCard';
 import { GeoAuditCard } from './components/GeoAuditCard';
+import { AiDiscoveryCard } from './components/AiDiscoveryCard';
 import { SeoAuditCard } from './components/SeoAuditCard';
 import { SpeedAuditCard } from './components/SpeedAuditCard';
 import { InsiderAuditCard } from './components/InsiderAuditCard';
@@ -139,6 +140,12 @@ export function App() {
                   geo={auditResult.geo}
                   lang={lang}
                   onOpenFix={handleOpenFixById}
+                />
+
+                {/* AI Share of Voice & Prompt Discovery Engine */}
+                <AiDiscoveryCard
+                  geo={auditResult.geo}
+                  lang={lang}
                 />
 
                 {/* Traditional SEO Card (with Mobile Viewport & Link Architecture) */}
