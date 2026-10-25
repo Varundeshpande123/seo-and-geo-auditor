@@ -3,10 +3,11 @@ import type { GeoMetrics, AuditIssue } from '../types/audit';
 export interface GeoOptions {
   html: string;
   robotsTxt?: string;
+  llmsTxt?: string;
   targetUrl: string;
 }
 
-export function analyzeGeo({ html, robotsTxt = '', targetUrl }: GeoOptions): { geo: GeoMetrics; issues: AuditIssue[] } {
+export function analyzeGeo({ html, robotsTxt = '', llmsTxt = '', targetUrl }: GeoOptions): { geo: GeoMetrics; issues: AuditIssue[] } {
   const issues: AuditIssue[] = [];
   let geoScore = 100;
 
@@ -244,6 +245,37 @@ export function analyzeGeo({ html, robotsTxt = '', targetUrl }: GeoOptions): { g
     },
   ];
 
+  // 4. Emerging 2025-2026 AI Standard: /llms.txt
+  const llmsTxtClean = llmsTxt.trim();
+  const isHtml = /<!DOCTYPE|<html|<body/i.test(llmsTxtClean);
+  const llmsTxtExists = llmsTxtClean.length > 20 && !isHtml;
+  const hasLlmsTitle = /^#\s+.+/m.test(llmsTxtClean);
+  const hasLlmsSummary = />\s+.+/m.test(llmsTxtClean) || /description|summary|overview/i.test(llmsTxtClean);
+
+  let llmsTxtStatus: 'good' | 'warning' | 'critical' = 'warning';
+  let llmsTxtFeedback = '';
+  const originUrl = new URL(targetUrl).origin;
+  const llmsFileUrl = `${originUrl}/llms.txt`;
+
+  if (llmsTxtExists) {
+    llmsTxtStatus = 'good';
+    llmsTxtFeedback = 'Valid /llms.txt file detected. Leading AI agents (Anthropic Claude, OpenAI) can ingest structured markdown context directly.';
+  } else {
+    llmsTxtStatus = 'warning';
+    llmsTxtFeedback = 'No /llms.txt found. Having an /llms.txt gives AI models (Claude, ChatGPT, Perplexity) a clean, low-token overview of your brand and documentation.';
+    
+    issues.push({
+      id: 'missing-llms-txt',
+      category: 'geo',
+      severity: 'info',
+      title: 'Missing /llms.txt (Modern AI Context Protocol)',
+      description: 'The /llms.txt standard allows AI systems and large language models to quickly understand what your site does, key endpoints, and APIs without parsing bloated HTML.',
+      recommendation: 'Place an llms.txt file in your public root directory containing a markdown summary and key page links.',
+      codeSnippet: `# ${brandTopic}\n\n> Comprehensive overview and verified solutions by ${brandTopic}.\n\n## Main Resources\n- [Home](${originUrl}): Official portal\n- [Services](${originUrl}/#services): Core offerings\n- [Contact](${originUrl}/#contact): Inquiries & verified details`,
+      impactScore: 6,
+    });
+  }
+
   return {
     geo: {
       score: calculatedGeoScore,
@@ -268,6 +300,15 @@ export function analyzeGeo({ html, robotsTxt = '', targetUrl }: GeoOptions): { g
         tabularDataFound,
         listsCount,
         feedback: `Found ${listsCount} structured lists, ${tabularDataFound ? 'data tables' : 'no tables'}, and ${faqOrQaFormatFound ? 'conversational Q&A headers' : 'standard headers'}.`,
+      },
+      llmsTxt: {
+        exists: llmsTxtExists,
+        hasTitle: hasLlmsTitle,
+        hasSummary: hasLlmsSummary,
+        fileUrl: llmsFileUrl,
+        status: llmsTxtStatus,
+        feedback: llmsTxtFeedback,
+        contentSnippet: llmsTxtExists ? llmsTxtClean.slice(0, 300) : undefined,
       },
       aiRecommendation,
       shareOfVoice: {

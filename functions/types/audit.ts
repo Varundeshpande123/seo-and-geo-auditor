@@ -109,6 +109,15 @@ export interface GeoMetrics {
     rating: 'Dominant' | 'Competitive' | 'Moderate' | 'Low';
     summary: string;
   };
+  llmsTxt?: {
+    exists: boolean;
+    hasTitle: boolean;
+    hasSummary: boolean;
+    fileUrl: string;
+    status: 'good' | 'warning' | 'critical';
+    feedback: string;
+    contentSnippet?: string;
+  };
   promptDiscovery: {
     prompt: string;
     intent: 'Informational' | 'Commercial' | 'Comparative';

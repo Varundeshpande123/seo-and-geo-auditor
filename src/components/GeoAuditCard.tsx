@@ -212,6 +212,51 @@ export const GeoAuditCard: React.FC<GeoAuditCardProps> = ({ geo, lang, onOpenFix
             </div>
           </div>
         </div>
+
+        {/* 4. Modern llms.txt AI Protocol */}
+        <div style={{
+          background: '#f8f9fa',
+          border: '1px solid #dadce0',
+          borderRadius: 'var(--radius-md)',
+          padding: '20px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.92rem', color: '#202124' }}>
+              <Bot size={16} color="#681da8" />
+              <span>/llms.txt AI Protocol</span>
+            </div>
+            <span className={`badge ${geo.llmsTxt?.exists ? 'badge-good' : 'badge-warning'}`}>
+              {geo.llmsTxt?.exists ? 'Active' : 'Missing'}
+            </span>
+          </div>
+
+          <p style={{ fontSize: '0.82rem', color: '#5f6368', marginBottom: '12px' }}>
+            {geo.llmsTxt?.feedback || 'Standard markdown context file for AI agents (OpenAI, Claude, Perplexity).'}
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>
+              <span>Target URL:</span>
+              <span style={{ color: '#1a73e8', wordBreak: 'break-all' }}>/llms.txt</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5f6368' }}>
+              <span>AI Ingestion:</span>
+              <span style={{ color: geo.llmsTxt?.exists ? '#137333' : '#b06000', fontWeight: 600 }}>
+                {geo.llmsTxt?.exists ? 'Instant Markdown' : 'Fallback to HTML'}
+              </span>
+            </div>
+          </div>
+
+          {!geo.llmsTxt?.exists && (
+            <button
+              onClick={() => onOpenFix('missing-llms-txt')}
+              className="btn btn-secondary"
+              style={{ width: '100%', padding: '8px', fontSize: '0.82rem' }}
+            >
+              <FileCode2 size={14} /> {lang === 'kn' ? 'llms.txt ಕೋಡ್ ಪಡೆಯಿರಿ' : 'Generate llms.txt'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
